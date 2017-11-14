@@ -250,6 +250,7 @@
             // tb_AH
             // 
             this.tb_AH.Location = new System.Drawing.Point(280, 23);
+            this.tb_AH.MaxLength = 2;
             this.tb_AH.Name = "tb_AH";
             this.tb_AH.Size = new System.Drawing.Size(51, 20);
             this.tb_AH.TabIndex = 36;
@@ -257,6 +258,7 @@
             // tb_AL
             // 
             this.tb_AL.Location = new System.Drawing.Point(280, 47);
+            this.tb_AL.MaxLength = 2;
             this.tb_AL.Name = "tb_AL";
             this.tb_AL.Size = new System.Drawing.Size(51, 20);
             this.tb_AL.TabIndex = 37;
@@ -264,6 +266,7 @@
             // tb_BH
             // 
             this.tb_BH.Location = new System.Drawing.Point(397, 23);
+            this.tb_BH.MaxLength = 2;
             this.tb_BH.Name = "tb_BH";
             this.tb_BH.Size = new System.Drawing.Size(51, 20);
             this.tb_BH.TabIndex = 38;
@@ -271,6 +274,7 @@
             // tb_BL
             // 
             this.tb_BL.Location = new System.Drawing.Point(397, 47);
+            this.tb_BL.MaxLength = 2;
             this.tb_BL.Name = "tb_BL";
             this.tb_BL.Size = new System.Drawing.Size(51, 20);
             this.tb_BL.TabIndex = 39;
@@ -287,6 +291,7 @@
             // tb_CL
             // 
             this.tb_CL.Location = new System.Drawing.Point(514, 47);
+            this.tb_CL.MaxLength = 2;
             this.tb_CL.Name = "tb_CL";
             this.tb_CL.Size = new System.Drawing.Size(51, 20);
             this.tb_CL.TabIndex = 41;
@@ -294,6 +299,7 @@
             // tb_CH
             // 
             this.tb_CH.Location = new System.Drawing.Point(514, 23);
+            this.tb_CH.MaxLength = 2;
             this.tb_CH.Name = "tb_CH";
             this.tb_CH.Size = new System.Drawing.Size(51, 20);
             this.tb_CH.TabIndex = 42;
@@ -301,6 +307,7 @@
             // tb_DH
             // 
             this.tb_DH.Location = new System.Drawing.Point(631, 23);
+            this.tb_DH.MaxLength = 2;
             this.tb_DH.Name = "tb_DH";
             this.tb_DH.Size = new System.Drawing.Size(51, 20);
             this.tb_DH.TabIndex = 46;
@@ -308,6 +315,7 @@
             // tb_DL
             // 
             this.tb_DL.Location = new System.Drawing.Point(631, 47);
+            this.tb_DL.MaxLength = 2;
             this.tb_DL.Name = "tb_DL";
             this.tb_DL.Size = new System.Drawing.Size(51, 20);
             this.tb_DL.TabIndex = 45;

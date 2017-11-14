@@ -10,6 +10,7 @@ namespace PixelDrawer
 {
     public partial class ResultForm : Form
     {
+        #region Fields
         public string AH;
         public string AL;
         public string BH;
@@ -22,21 +23,35 @@ namespace PixelDrawer
         public float columnPosition;
         public float ratioX;
         public float ratioY;
+        public Color color;
+        #endregion
 
-        public ResultForm(int rowPosition, int columnPosition, float ratioX, float ratioY)
+        private void SetDefaultSettings()
         {
-            InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.Black;
             this.Paint += this.OnPaint;
             this.KeyDown += ResultForm_KeyDown;
+        }
+        #region Constructors
+        public ResultForm(int rowPosition, int columnPosition, float ratioX, float ratioY)
+        {
+            InitializeComponent();
+            SetDefaultSettings();
             this.rowPosition = rowPosition;
             this.columnPosition = columnPosition;
             this.ratioX = ratioX;
             this.ratioY = ratioY;
         }
+
+        public ResultForm(Color color)
+        {
+            SetDefaultSettings();
+            this.BackColor = color;
+        }
+        #endregion
 
         #region EventHandlers
         //exit Form
@@ -50,7 +65,14 @@ namespace PixelDrawer
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            e.Graphics.FillRectangle(SystemBrushes.ControlLight, (float)(columnPosition * ratioX), (float)(rowPosition * ratioY), (float)ratioX, (float)ratioY);
+            Brush brush = new SolidBrush(Color.Red);
+           // SystemBrushes.ControlLightLight
+
+            e.Graphics.FillRectangle(brush,
+                (float)(columnPosition * ratioX),
+                (float)(rowPosition * ratioY),
+                (float)ratioX,
+                (float)ratioY);
         }
         #endregion
     }

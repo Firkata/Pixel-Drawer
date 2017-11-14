@@ -10,6 +10,7 @@ namespace PixelDrawer
 {
     public partial class UserForm : Form
     {
+        #region Fields
         public int buttonCheckedIndex;
         public static Rectangle resolution = Screen.PrimaryScreen.Bounds;
         public int screenHeight = resolution.Height;
@@ -18,22 +19,22 @@ namespace PixelDrawer
         public int newScreenWidth = 0;
         public float ratioX;
         public float ratioY;
+        public bool isModeSet = false;
+        public bool isTextMode = true;
+        #endregion
 
         public UserForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
             this.BackColor = Color.LightSteelBlue;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = true;
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.KeyDown += UserForm_KeyDown;
         }
 
-        private void btn_Submit_Click(object sender, EventArgs e)
-        {
-            SelectedTask(buttonCheckedIndex);
-        }
-        
         //Показва кой радиобутон е цъкнат
         private void SelectedTask(int buttonCheckIndex)
         {
@@ -55,6 +56,7 @@ namespace PixelDrawer
                 case 7:
                     break;
                 case 8:
+                    ChangeScreenColor(tb_BL.Text);
                     break;
                 case 9:
                     DrawDot();
@@ -65,50 +67,145 @@ namespace PixelDrawer
                     break;
             }
         }
-        
-        #region SelectedTasks
+
+        #region Tasks
+
 
         //Режим на изображението
         private void SelectedMode(string AL)
         {
-            switch (Convert.ToInt32(AL))
+            try
             {
-                case 0:
-                    RenderFormResolution(45, 25);
-                    break;
-                case 1:
-                    RenderFormResolution(45, 25);
-                    break;
-                case 2:
-                    RenderFormResolution(80, 25);
-                    break;
-                case 3:
-                    RenderFormResolution(80, 25);
-                    break;
-                case 4:
-                    RenderFormResolution(320, 200);
-                    break;
-                case 5:
-                    RenderFormResolution(320, 200);
-                    break;
-                case 6:
-                    RenderFormResolution(640, 200);
-                    break;
-                case 7:
-                    RenderFormResolution(80, 25);
-                    break;
-                default:
-                    break;
+                switch (Convert.ToInt32(AL))
+                {
+                    case 0:
+                        RenderFormResolution(45, 25);
+                        isTextMode = true;
+                        break;
+                    case 1:
+                        RenderFormResolution(45, 25);
+                        isTextMode = true;
+                        break;
+                    case 2:
+                        RenderFormResolution(80, 25);
+                        isTextMode = true;
+                        break;
+                    case 3:
+                        RenderFormResolution(80, 25);
+                        isTextMode = true;
+                        break;
+                    case 4:
+                        RenderFormResolution(320, 200);
+                        isTextMode = false;
+                        break;
+                    case 5:
+                        RenderFormResolution(320, 200);
+                        isTextMode = false;
+                        break;
+                    case 6:
+                        RenderFormResolution(640, 200);
+                        isTextMode = false;
+                        break;
+                    case 7:
+                        RenderFormResolution(80, 25);
+                        isTextMode = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Невалидни данни");
+            }
+        }
+
+        //Смяна на палитрата
+        private void ChangeScreenColor(string colorHex)
+        {
+            try
+            {
+                Color color = new Color();
+                int colorNumber = HexToDecimal(colorHex);
+                switch (colorNumber)
+                {
+                    case 0:
+                        color = Color.Black;
+                        break;
+                    case 1:
+                        color = Color.Red;
+                        break;
+                    case 2:
+                        color = Color.Blue;
+                        break;
+                    case 3:
+                        color = Color.Green;
+                        break;
+                    case 4:
+                        color = Color.Yellow;
+                        break;
+                    case 5:
+                        color = Color.Orange;
+                        break;
+                    case 6:
+                        color = Color.Pink;
+                        break;
+                    case 7:
+                        color = Color.Purple;
+                        break;
+                    case 8:
+                        color = Color.Brown;
+                        break;
+                    case 9:
+                        color = Color.White;
+                        break;
+                    case 10:
+                        color = Color.MistyRose;
+                        break;
+                    case 11:
+                        color = Color.Gray;
+                        break;
+                    case 12:
+                        color = Color.Magenta;
+                        break;
+                    case 13:
+                        color = Color.Tomato;
+                        break;
+                    case 14:
+                        color = Color.Thistle;
+                        break;
+                    case 15:
+                        color = Color.Turquoise;
+                        break;
+                    default:
+                        MessageBox.Show("Невалидни данни");
+                        return;
+                }
+                ResultForm resultForm = new ResultForm(color);
+                resultForm.ShowDialog();
+            }
+            catch
+            {
+                MessageBox.Show("Невалидни данни");
+                return;
             }
         }
 
         //Запис на точка
         private void DrawDot()
         {
-            int columns = HexToDecimal(string.Format(@"{0}{1}", tb_CL.Text, tb_CH.Text));
+            if (isTextMode)
+            {
+                MessageBox.Show("Смени на графичен режим");
+                return;
+            }
+            int columns = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int rows = HexToDecimal(tb_DL.Text);
-            OpenResultForm(rows, columns, ratioX, ratioY);
+
+            ResultForm resultForm = new ResultForm(rows, columns, ratioX, ratioY);
+            resultForm.ShowDialog();
         }
+
         #endregion
 
         //Изчислява резолюцията на програмата спрямо монитора разделена на зададения режим
@@ -121,22 +218,40 @@ namespace PixelDrawer
             MessageBox.Show(string.Format(@"режимът е настроен на {0}х{1}",x,y));
         }
 
-        //Отваря формата за рисуване
-        public void OpenResultForm(int rowPosition, int columnPosition, float ratioX, float ratioY)
-        {
-            ResultForm resultForm = new ResultForm(rowPosition, columnPosition, ratioX, ratioY);
-            resultForm.ShowDialog();
-        }
-
         #region Conversions
 
         private int HexToDecimal(string hexInput)
         {
-            return int.Parse(hexInput, System.Globalization.NumberStyles.HexNumber);
+            int result = int.Parse(hexInput, System.Globalization.NumberStyles.HexNumber);
+            return result;
         }
         #endregion
 
         #region EventHandlers
+
+        //При натискане на Submit бутона
+        private void btn_Submit_Click(object sender, EventArgs e)
+        {
+            if (buttonCheckedIndex == 1)
+                isModeSet = true;
+
+            if (!isModeSet)
+            {
+                MessageBox.Show("Не е зададен режим на работа");
+                return;
+            }
+            SelectedTask(buttonCheckedIndex);
+        }
+
+        //При натискане на клавиш от клавиатурата
+        private void UserForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Return || e.KeyCode == Keys.Enter)
+            {
+                btn_Submit_Click(sender, e);
+            }
+        }
+
         //Режим на изображението
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
@@ -413,24 +528,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = "00";
             tb_BL.ReadOnly = false;
             tb_BL.BackColor = Color.White;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -457,24 +579,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = "00";
             tb_AL.ReadOnly = false;
             tb_AL.BackColor = Color.White;
 
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = true;
             tb_BH.BackColor = Color.LightSlateGray;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = "00";
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
+            tb_CL.Text = "00";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = "00";
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
