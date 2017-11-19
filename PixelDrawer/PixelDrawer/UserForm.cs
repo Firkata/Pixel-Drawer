@@ -21,11 +21,13 @@ namespace PixelDrawer
         public float ratioY;
         public bool isModeSet = false;
         public bool isTextMode = true;
+        public ResultForm resultForm;
         #endregion
 
         public UserForm()
         {
             InitializeComponent();
+            resultForm = new ResultForm();
             this.KeyPreview = true;
             this.BackColor = Color.LightSteelBlue;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -68,8 +70,21 @@ namespace PixelDrawer
             }
         }
 
-        #region Tasks
+        public void ToggleTextButtons(bool isActive)
+        {
+            radioButton2.Enabled = isActive;
+            radioButton3.Enabled = isActive;
+            radioButton4.Enabled = isActive;
+            radioButton5.Enabled = isActive;
+            radioButton6.Enabled = isActive;
+            radioButton7.Enabled = isActive;
+        }
 
+        public void ToggleGraphicButtons(bool isActive)
+        {
+
+        }
+        #region Tasks
 
         //Режим на изображението
         private void SelectedMode(string AL)
@@ -80,34 +95,42 @@ namespace PixelDrawer
                 {
                     case 0:
                         RenderFormResolution(45, 25);
+                        ToggleTextButtons(true);
                         isTextMode = true;
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
+                        ToggleTextButtons(true);
                         isTextMode = true;
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
+                        ToggleTextButtons(true);
                         isTextMode = true;
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
+                        ToggleTextButtons(true);
                         isTextMode = true;
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
+                        ToggleTextButtons(false);
                         isTextMode = false;
                         break;
                     case 5:
                         RenderFormResolution(320, 200);
+                        ToggleTextButtons(false);
                         isTextMode = false;
                         break;
                     case 6:
                         RenderFormResolution(640, 200);
+                        ToggleTextButtons(false);
                         isTextMode = false;
                         break;
                     case 7:
                         RenderFormResolution(80, 25);
+                        ToggleTextButtons(true);
                         isTextMode = true;
                         break;
                     default:
@@ -181,7 +204,7 @@ namespace PixelDrawer
                         MessageBox.Show("Невалидни данни");
                         return;
                 }
-                ResultForm resultForm = new ResultForm(color);
+                resultForm.BackColor = color;
                 resultForm.ShowDialog();
             }
             catch
@@ -202,10 +225,13 @@ namespace PixelDrawer
             int columns = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int rows = HexToDecimal(tb_DL.Text);
 
-            ResultForm resultForm = new ResultForm(rows, columns, ratioX, ratioY);
+            //points.Add(new Point(rows, columns));
+            ////ResultForm resultForm = new ResultForm(rows, columns, ratioX, ratioY);
+            //ResultForm resultForm = new ResultForm(points, ratioX, ratioY);
+            //ResultForm.points;
+            resultForm.Points.Add(new Point(columns, rows));
             resultForm.ShowDialog();
         }
-
         #endregion
 
         //Изчислява резолюцията на програмата спрямо монитора разделена на зададения режим
@@ -215,6 +241,8 @@ namespace PixelDrawer
             ratioX = (float)resolution.Width / x;
             newScreenHeight = y;
             ratioY = (float)resolution.Height / y;
+            resultForm.RatioX = ratioX;
+            resultForm.RatioY = ratioY;
             MessageBox.Show(string.Format(@"режимът е настроен на {0}х{1}",x,y));
         }
 

@@ -11,23 +11,26 @@ namespace PixelDrawer
     public partial class ResultForm : Form
     {
         #region Fields
-        public string AH;
-        public string AL;
-        public string BH;
-        public string BL;
-        public string CH;
-        public string CL;
-        public string DH;
-        public string DL;
-        public float rowPosition;
-        public float columnPosition;
-        public float ratioX;
-        public float ratioY;
-        public Color color;
+        private string AH;
+        private string AL;
+        private string BH;
+        private string BL;
+        private string CH;
+        private string CL;
+        private string DH;
+        private string DL;
+        private float rowPosition;
+        private float columnPosition;
+        private float ratioX;
+        private float ratioY;
+        private Color color = Color.Black;
+        private List<Point> points;
         #endregion
 
-        private void SetDefaultSettings()
+        #region Constructors
+        public ResultForm()
         {
+            Points = new List<Point>();
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
@@ -35,22 +38,23 @@ namespace PixelDrawer
             this.Paint += this.OnPaint;
             this.KeyDown += ResultForm_KeyDown;
         }
-        #region Constructors
-        public ResultForm(int rowPosition, int columnPosition, float ratioX, float ratioY)
-        {
-            InitializeComponent();
-            SetDefaultSettings();
-            this.rowPosition = rowPosition;
-            this.columnPosition = columnPosition;
-            this.ratioX = ratioX;
-            this.ratioY = ratioY;
-        }
+        #endregion
 
-        public ResultForm(Color color)
-        {
-            SetDefaultSettings();
-            this.BackColor = color;
-        }
+        #region Properties
+        public string AH1 { get => AH; set => AH = value; }
+        public string AL1 { get => AL; set => AL = value; }
+        public string BH1 { get => BH; set => BH = value; }
+        public string BL1 { get => BL; set => BL = value; }
+        public string CH1 { get => CH; set => CH = value; }
+        public string CL1 { get => CL; set => CL = value; }
+        public string DH1 { get => DH; set => DH = value; }
+        public string DL1 { get => DL; set => DL = value; }
+        public float RowPosition { get => rowPosition; set => rowPosition = value; }
+        public float ColumnPosition { get => columnPosition; set => columnPosition = value; }
+        public float RatioX { get => ratioX; set => ratioX = value; }
+        public float RatioY { get => ratioY; set => ratioY = value; }
+        public Color Color { get => color; set =>  color = value; }
+        public List<Point> Points { get => points; set => points = value; }
         #endregion
 
         #region EventHandlers
@@ -59,20 +63,22 @@ namespace PixelDrawer
         {
             if (e.KeyCode == Keys.Escape)
             {
-                this.Close();
+                this.Hide();
             }
         }
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
             Brush brush = new SolidBrush(Color.Red);
-           // SystemBrushes.ControlLightLight
-
-            e.Graphics.FillRectangle(brush,
-                (float)(columnPosition * ratioX),
-                (float)(rowPosition * ratioY),
-                (float)ratioX,
-                (float)ratioY);
+            // SystemBrushes.ControlLightLight
+            foreach (Point p in Points)
+            {
+                e.Graphics.FillRectangle(brush,
+                (float)(p.X * RatioX),
+                (float)(p.Y * RatioY),
+                (float)RatioX,
+                (float)RatioY);
+            }  
         }
         #endregion
     }
