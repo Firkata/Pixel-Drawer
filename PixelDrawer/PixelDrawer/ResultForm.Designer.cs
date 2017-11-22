@@ -29,13 +29,23 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ResultForm));
+            this.tb_General = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
+            // 
+            // tb_General
+            // 
+            this.tb_General.Location = new System.Drawing.Point(12, 23);
+            this.tb_General.Name = "tb_General";
+            this.tb_General.Size = new System.Drawing.Size(531, 238);
+            this.tb_General.TabIndex = 0;
+            this.tb_General.Text = "";
             // 
             // ResultForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(658, 359);
+            this.Controls.Add(this.tb_General);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ResultForm";
             this.Text = "PixelDrawer";
@@ -44,5 +54,7 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.RichTextBox tb_General;
     }
 }

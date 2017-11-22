@@ -25,6 +25,7 @@ namespace PixelDrawer
         private float ratioY;
         private Color color = Color.Black;
         private List<Point> points;
+        private bool isTextMode;
         #endregion
 
         #region Constructors
@@ -37,6 +38,7 @@ namespace PixelDrawer
             this.BackColor = Color.Black;
             this.Paint += this.OnPaint;
             this.KeyDown += ResultForm_KeyDown;
+        
         }
         #endregion
 
@@ -55,6 +57,18 @@ namespace PixelDrawer
         public float RatioY { get => ratioY; set => ratioY = value; }
         public Color Color { get => color; set =>  color = value; }
         public List<Point> Points { get => points; set => points = value; }
+        public bool IsTextMode { get => isTextMode; set => isTextMode = value; }
+        public RichTextBox Tb_General
+        {
+            get
+            {
+                return tb_General;
+            }
+            set
+            {
+                tb_General = value;
+            }
+        }
         #endregion
 
         #region EventHandlers

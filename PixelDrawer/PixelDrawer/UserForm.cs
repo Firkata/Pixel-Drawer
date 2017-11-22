@@ -136,6 +136,20 @@ namespace PixelDrawer
                     default:
                         break;
                 }
+                resultForm.IsTextMode = isTextMode;
+                if (isTextMode)
+                {
+                    if (resultForm.Tb_General != null)
+                    {
+                        resultForm.Controls.Remove(resultForm.Tb_General);
+                        resultForm.Tb_General = null;
+                        return;
+                    }
+                    resultForm.Tb_General = new RichTextBox();
+                    resultForm.Tb_General.ReadOnly= true;
+                    resultForm.Tb_General.Dock = DockStyle.Fill;
+                    resultForm.Controls.Add(resultForm.Tb_General);
+                }
             }
             catch
             {
@@ -205,10 +219,17 @@ namespace PixelDrawer
                         return;
                 }
                 resultForm.BackColor = color;
-                resultForm.ShowDialog();
+                if (isTextMode)
+                {
+                    resultForm.Tb_General.Text = "kur";
+                    resultForm.Tb_General.BackColor = color;
+                    resultForm.Tb_General.ForeColor = color;
+                }
+                resultForm.ShowDialog();s
             }
-            catch
+            catch(Exception ex)
             {
+                ex.ToString();
                 MessageBox.Show("Невалидни данни");
                 return;
             }
