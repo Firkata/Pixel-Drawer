@@ -278,8 +278,18 @@ namespace PixelDrawer
 
         private int HexToDecimal(string hexInput)
         {
-            int result = int.Parse(hexInput, System.Globalization.NumberStyles.HexNumber);
-            return result;
+            try
+            {
+                int result = int.Parse(hexInput, System.Globalization.NumberStyles.HexNumber);
+                return result;
+            }
+            catch
+            {
+                MessageBox.Show("Невалидни данни");
+            }
+
+            return 0;
+            
         }
         #endregion
 
