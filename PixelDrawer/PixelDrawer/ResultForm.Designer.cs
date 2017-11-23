@@ -36,6 +36,7 @@
             // 
             this.tb_General.Location = new System.Drawing.Point(12, 23);
             this.tb_General.Name = "tb_General";
+            this.tb_General.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             this.tb_General.Size = new System.Drawing.Size(531, 238);
             this.tb_General.TabIndex = 0;
             this.tb_General.Text = "";
@@ -47,6 +48,7 @@
             this.ClientSize = new System.Drawing.Size(658, 359);
             this.Controls.Add(this.tb_General);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "ResultForm";
             this.Text = "PixelDrawer";
             this.ResumeLayout(false);

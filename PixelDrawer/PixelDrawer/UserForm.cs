@@ -143,9 +143,10 @@ namespace PixelDrawer
                     {
                         resultForm.Controls.Remove(resultForm.Tb_General);
                         resultForm.Tb_General = null;
-                        return;
+                        //return;
                     }
                     resultForm.Tb_General = new RichTextBox();
+                    resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX* 1.0546875));
                     resultForm.Tb_General.ReadOnly= true;
                     resultForm.Tb_General.Dock = DockStyle.Fill;
                     resultForm.Controls.Add(resultForm.Tb_General);
@@ -219,13 +220,19 @@ namespace PixelDrawer
                         return;
                 }
                 resultForm.BackColor = color;
+                
                 if (isTextMode)
                 {
-                    resultForm.Tb_General.Text = "kur";
+                    string input = "";
+                    for(int i=0; i < 80; i++)
+                    {
+                        input += "A";
+                    }
+                    resultForm.Tb_General.Text = input;
                     resultForm.Tb_General.BackColor = color;
-                    resultForm.Tb_General.ForeColor = color;
+                    resultForm.Tb_General.BorderStyle = BorderStyle.None;   
                 }
-                resultForm.ShowDialog();s
+                resultForm.ShowDialog();
             }
             catch(Exception ex)
             {

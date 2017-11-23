@@ -26,6 +26,7 @@ namespace PixelDrawer
         private Color color = Color.Black;
         private List<Point> points;
         private bool isTextMode;
+
         #endregion
 
         #region Constructors
@@ -38,7 +39,7 @@ namespace PixelDrawer
             this.BackColor = Color.Black;
             this.Paint += this.OnPaint;
             this.KeyDown += ResultForm_KeyDown;
-        
+            this.KeyPreview = true;
         }
         #endregion
 
