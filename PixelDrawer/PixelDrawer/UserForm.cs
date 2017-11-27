@@ -54,6 +54,7 @@ namespace PixelDrawer
                 case 5:
                     break;
                 case 6:
+                    InsertStyledText();
                     break;
                 case 7:
                     break;
@@ -137,19 +138,21 @@ namespace PixelDrawer
                         break;
                 }
                 resultForm.IsTextMode = isTextMode;
+                if (resultForm.Tb_General != null)
+                {
+                    resultForm.Controls.Remove(resultForm.Tb_General);
+                    resultForm.Tb_General = null;
+                }
                 if (isTextMode)
                 {
-                    if (resultForm.Tb_General != null)
+                    if  (resultForm.Tb_General == null)
                     {
-                        resultForm.Controls.Remove(resultForm.Tb_General);
-                        resultForm.Tb_General = null;
-                        //return;
+                        resultForm.Tb_General = new RichTextBox();
+                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General.ReadOnly = true;
+                        resultForm.Tb_General.Dock = DockStyle.Fill;
+                        resultForm.Controls.Add(resultForm.Tb_General);
                     }
-                    resultForm.Tb_General = new RichTextBox();
-                    resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX* 1.0546875));
-                    resultForm.Tb_General.ReadOnly= true;
-                    resultForm.Tb_General.Dock = DockStyle.Fill;
-                    resultForm.Controls.Add(resultForm.Tb_General);
                 }
             }
             catch
@@ -258,6 +261,28 @@ namespace PixelDrawer
             //ResultForm resultForm = new ResultForm(points, ratioX, ratioY);
             //ResultForm.points;
             resultForm.Points.Add(new Point(columns, rows));
+            resultForm.ShowDialog();
+        }
+
+        private void InsertStyledText()
+        {
+            if (!isTextMode)
+            {
+                MessageBox.Show("Смени на текстов режим");
+                return;
+            }
+
+            char displayCharacter = (char)HexToDecimal(tb_AL.Text);
+            int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
+            int displayPage = HexToDecimal(tb_BH.Text); // TODO: Implement display pages; Check if display page is valid
+            // TODO: Implement text stylization
+            string generatedText = "";
+            for (int i=0; i<characterCount; i++)
+            {
+                generatedText += displayCharacter;
+            }
+            // TODO: Implement calculation of cursor position
+            resultForm.Tb_General.Text = resultForm.Tb_General.Text.Insert(resultForm.Tb_General.SelectionStart, generatedText);
             resultForm.ShowDialog();
         }
         #endregion
