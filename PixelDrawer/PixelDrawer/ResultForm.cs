@@ -70,6 +70,17 @@ namespace PixelDrawer
                 tb_General = value;
             }
         }
+        public Cursor Position
+        {
+            get
+            {
+                return tb_General.Cursor;
+            }
+            set
+            {
+                tb_General.Cursor = value;
+            }
+        }
         #endregion
 
         #region EventHandlers

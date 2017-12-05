@@ -282,7 +282,21 @@ namespace PixelDrawer
                 generatedText += displayCharacter;
             }
             // TODO: Implement calculation of cursor position
-            resultForm.Tb_General.Text = resultForm.Tb_General.Text.Insert(resultForm.Tb_General.SelectionStart, generatedText);
+            //resultForm.Tb_General.Text = resultForm.Tb_General.Text.Insert(resultForm.Tb_General.SelectionStart, generatedText);
+            //resultForm.Tb_General.Text = generatedText;
+            string space = "";
+            for (int i = 0; i < generatedText.Length; i++)
+            {
+                space += " ";
+            }
+
+            
+            var position = resultForm.Tb_General.Cursor.HotSpot;
+            string text = string.Format(@"{0}{1}", space, generatedText);
+            resultForm.Tb_General.Text = resultForm.Text.Insert(0, text);
+            resultForm.Tb_General.SelectionStart = space.Length;
+            resultForm.Tb_General.SelectionLength = space.Length + text.Length;
+            
             resultForm.ShowDialog();
         }
         #endregion
@@ -549,18 +563,23 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = "45";
             tb_AL.ReadOnly = false;
             tb_AL.BackColor = Color.White;
 
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = "00";
             tb_BL.ReadOnly = false;
             tb_BL.BackColor = Color.White;
 
+            tb_CH.Text = "00";
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
+            tb_CL.Text = "09";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
