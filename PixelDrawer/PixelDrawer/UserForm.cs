@@ -19,6 +19,8 @@ namespace PixelDrawer
         public int newScreenWidth = 0;
         public float ratioX;
         public float ratioY;
+        public int cursorRow;
+        public int cursorCol;
         public bool isModeSet = false;
         public bool isTextMode = true;
         public ResultForm resultForm;
@@ -48,6 +50,7 @@ namespace PixelDrawer
                 case 2:
                     break;
                 case 3:
+                    PositionCursor();
                     break;
                 case 4:
                     break;
@@ -80,11 +83,7 @@ namespace PixelDrawer
             radioButton6.Enabled = isActive;
             radioButton7.Enabled = isActive;
         }
-
-        public void ToggleGraphicButtons(bool isActive)
-        {
-
-        }
+        
         #region Tasks
 
         //Режим на изображението
@@ -159,6 +158,69 @@ namespace PixelDrawer
             {
                 MessageBox.Show("Невалидни данни");
             }
+        }
+
+        //Позициониране на курсора
+        private void PositionCursor()
+        {
+            cursorRow = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
+            cursorCol = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
+            MessageBox.Show(string.Format(@"Курсора е на ред: {0} колона: {1}",cursorRow,cursorCol));
+        }
+
+        //Запис на символ и атрибут
+        private void InsertStyledText()
+        {
+            if (!isTextMode)
+            {
+                MessageBox.Show("Смени на текстов режим");
+                return;
+            }
+
+            char displayCharacter = (char)HexToDecimal(tb_AL.Text);
+            int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
+            int displayPage = HexToDecimal(tb_BH.Text);
+            string generatedText = "";
+            for (int i = 0; i < characterCount; i++)
+            {
+                generatedText += displayCharacter;
+            }
+
+            // TODO: Implement calculation of cursor position
+            //cursorRow -= 1;
+            var text = new StringBuilder();
+            for (int i = 0; i < cursorRow; i++)
+            {
+                text.AppendLine();
+            }
+
+            string space = new string(' ', cursorCol);
+
+            text.Append(space);
+            text.Append(generatedText);
+
+            resultForm.Tb_General.Text = "";
+            resultForm.Tb_General.Text = resultForm.Text.Insert(0, text.ToString());
+            resultForm.Tb_General.SelectionStart = cursorRow + cursorCol;
+            resultForm.Tb_General.SelectionLength = 0;
+
+            // TODO: Implement text stylization
+            int styleInDecimal = HexToDecimal(tb_BL.Text);
+            StringBuilder bytes = new StringBuilder();
+            while (styleInDecimal/2>1)
+            {
+                if(styleInDecimal%2 == 0)
+                {
+                    bytes.Append("0");
+                }
+                else
+                {
+                    bytes.Append("1");
+                }
+            }
+
+            // TODO: Implement display pages; Check if display page is valid
+            resultForm.Show();
         }
 
         //Смяна на палитрата
@@ -264,41 +326,6 @@ namespace PixelDrawer
             resultForm.ShowDialog();
         }
 
-        private void InsertStyledText()
-        {
-            if (!isTextMode)
-            {
-                MessageBox.Show("Смени на текстов режим");
-                return;
-            }
-
-            char displayCharacter = (char)HexToDecimal(tb_AL.Text);
-            int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
-            int displayPage = HexToDecimal(tb_BH.Text); // TODO: Implement display pages; Check if display page is valid
-            // TODO: Implement text stylization
-            string generatedText = "";
-            for (int i=0; i<characterCount; i++)
-            {
-                generatedText += displayCharacter;
-            }
-            // TODO: Implement calculation of cursor position
-            //resultForm.Tb_General.Text = resultForm.Tb_General.Text.Insert(resultForm.Tb_General.SelectionStart, generatedText);
-            //resultForm.Tb_General.Text = generatedText;
-            string space = "";
-            for (int i = 0; i < generatedText.Length; i++)
-            {
-                space += " ";
-            }
-
-            
-            var position = resultForm.Tb_General.Cursor.HotSpot;
-            string text = string.Format(@"{0}{1}", space, generatedText);
-            resultForm.Tb_General.Text = resultForm.Text.Insert(0, text);
-            resultForm.Tb_General.SelectionStart = space.Length;
-            resultForm.Tb_General.SelectionLength = space.Length + text.Length;
-            
-            resultForm.ShowDialog();
-        }
         #endregion
 
         //Изчислява резолюцията на програмата спрямо монитора разделена на зададения режим
@@ -369,21 +396,27 @@ namespace PixelDrawer
             tb_AL.ReadOnly = false;
             tb_AL.BackColor = Color.White;
 
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = true;
             tb_BH.BackColor = Color.LightSlateGray;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.LightSlateGray;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -418,27 +451,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
-            tb_AL.Text = "";
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
-            tb_BH.Text = "";
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = true;
             tb_BH.BackColor = Color.LightSlateGray;
 
-            tb_BL.Text = "";
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = "00";
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
+            tb_CL.Text = "00";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -461,24 +498,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
+            tb_DH.Text = cursorRow.ToString();
             tb_DH.ReadOnly = false;
             tb_DH.BackColor = Color.White;
 
+            tb_DL.Text = cursorCol.ToString();
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
@@ -495,30 +539,39 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
-            tb_DH.ReadOnly = false;
-            tb_DH.BackColor = Color.White;
+            tb_DH.Text = string.Empty;
+            tb_DH.ReadOnly = true;
+            tb_DH.BackColor = Color.LightSlateGray;
 
-            tb_DL.ReadOnly = false;
-            tb_DL.BackColor = Color.White;
+            tb_DL.Text = string.Empty;
+            tb_DL.ReadOnly = true;
+            tb_DL.BackColor = Color.LightSlateGray;
 
             lbl_Help.Text = string.Format("03H." +
                 Environment.NewLine +
-                "Новата позиция се задава във формат ред (DH) и колона (DL) за видеостраницата (BH).");
+                "В BH се задава номера на видеостраницата." +
+                "В DH и DL се получава реда и колоната на курсора за указаната страница." +
+                "В CH и CL се получава информация за вида на курсора.");
         }
 
         //Четене на символ и атрибут
@@ -529,24 +582,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -583,9 +643,11 @@ namespace PixelDrawer
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -603,24 +665,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = "00";
             tb_AL.ReadOnly = false;
             tb_AL.BackColor = Color.White;
 
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
+            tb_BL.Text = "00";
             tb_BL.ReadOnly = false;
             tb_BL.BackColor = Color.White;
 
+            tb_CH.Text = "00";
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
+            tb_CL.Text = "00";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
@@ -740,24 +809,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = true;
             tb_BH.BackColor = Color.LightSlateGray;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = "00";
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
+            tb_CL.Text = "00";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = "00";
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
@@ -776,24 +852,31 @@ namespace PixelDrawer
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
+            tb_AL.Text = string.Empty;
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
+            tb_BH.Text = string.Empty;
             tb_BH.ReadOnly = true;
             tb_BH.BackColor = Color.LightSlateGray;
 
+            tb_BL.Text = string.Empty;
             tb_BL.ReadOnly = true;
             tb_BL.BackColor = Color.LightSlateGray;
 
+            tb_CH.Text = string.Empty;
             tb_CH.ReadOnly = true;
             tb_CH.BackColor = Color.LightSlateGray;
 
+            tb_CL.Text = string.Empty;
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
+            tb_DH.Text = string.Empty;
             tb_DH.ReadOnly = true;
             tb_DH.BackColor = Color.LightSlateGray;
 
+            tb_DL.Text = string.Empty;
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
