@@ -81,6 +81,7 @@ namespace PixelDrawer
                 tb_General.Cursor = value;
             }
         }
+        public bool EscPressed { get; set; }
         #endregion
 
         #region EventHandlers
@@ -90,6 +91,7 @@ namespace PixelDrawer
             if (e.KeyCode == Keys.Escape)
             {
                 this.Hide();
+                EscPressed = true;
             }
         }
 

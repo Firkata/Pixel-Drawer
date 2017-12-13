@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PixelDrawer
@@ -207,20 +208,43 @@ namespace PixelDrawer
             // TODO: Implement text stylization
             int styleInDecimal = HexToDecimal(tb_BL.Text);
             StringBuilder bytes = new StringBuilder();
-            while (styleInDecimal/2>1)
+            string byteRepr = "";
+            int remainder;
+            
+            while (styleInDecimal > 0)
             {
-                if(styleInDecimal%2 == 0)
-                {
-                    bytes.Append("0");
-                }
-                else
-                {
-                    bytes.Append("1");
-                }
+                remainder = styleInDecimal % 2;
+                styleInDecimal /= 2;
+                byteRepr = string.Format(@"{0}{1}", remainder, byteRepr);
+            }
+            int remainingBits = 8 - byteRepr.Length;
+            byteRepr = new string('0', remainingBits) + byteRepr;
+
+            int red = byteRepr[1] == '1' ? 255 : 0;
+            int green = byteRepr[2] == '1' ? 255 : 0;
+            int blue = byteRepr[3] == '1' ? 255 : 0;
+
+            Color textColor = Color.FromArgb(red, green, blue);
+            resultForm.Tb_General.ForeColor = textColor;
+
+            if (byteRepr[0] == '1')
+            {
+                Blink(textColor);
             }
 
             // TODO: Implement display pages; Check if display page is valid
+            
             resultForm.Show();
+        }
+
+        private async void Blink(Color fontColor)
+        {
+            resultForm.EscPressed = false;
+            while (!resultForm.EscPressed)
+            {
+                await Task.Delay(500);
+                resultForm.Tb_General.ForeColor = resultForm.Tb_General.ForeColor == fontColor ? resultForm.Tb_General.BackColor : fontColor;
+            }
         }
 
         //Смяна на палитрата
