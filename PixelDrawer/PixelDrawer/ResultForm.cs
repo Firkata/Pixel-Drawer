@@ -97,7 +97,7 @@ namespace PixelDrawer
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            Brush brush = new SolidBrush(Color.Red);
+            Brush brush = new SolidBrush(Color);
             // SystemBrushes.ControlLightLight
             foreach (Point p in Points)
             {

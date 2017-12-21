@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,7 @@ namespace PixelDrawer
         public float ratioY;
         public int cursorRow;
         public int cursorCol;
+        public int videoPageNum;
         public bool isModeSet = false;
         public bool isTextMode = true;
         public ResultForm resultForm;
@@ -54,6 +56,7 @@ namespace PixelDrawer
                     PositionCursor();
                     break;
                 case 4:
+                    GetCaretPosition();
                     break;
                 case 5:
                     break;
@@ -74,7 +77,7 @@ namespace PixelDrawer
                     break;
             }
         }
-
+        
         public void ToggleTextButtons(bool isActive)
         {
             radioButton2.Enabled = isActive;
@@ -166,7 +169,14 @@ namespace PixelDrawer
         {
             cursorRow = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
             cursorCol = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
-            MessageBox.Show(string.Format(@"Курсора е на ред: {0} колона: {1}",cursorRow,cursorCol));
+            videoPageNum = !string.IsNullOrEmpty(tb_BH.Text) ? int.Parse(tb_BH.Text) : 1;
+            MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow, cursorCol));
+        }
+
+        //Информация за курсора
+        private void GetCaretPosition()
+        {
+            MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}",videoPageNum, Environment.NewLine, cursorRow, cursorCol));
         }
 
         //Запис на символ и атрибут
@@ -186,7 +196,7 @@ namespace PixelDrawer
             {
                 generatedText += displayCharacter;
             }
-
+            
             // TODO: Implement calculation of cursor position
             //cursorRow -= 1;
             var text = new StringBuilder();
@@ -204,10 +214,9 @@ namespace PixelDrawer
             resultForm.Tb_General.Text = resultForm.Text.Insert(0, text.ToString());
             resultForm.Tb_General.SelectionStart = cursorRow + cursorCol;
             resultForm.Tb_General.SelectionLength = 0;
-
+           
             // TODO: Implement text stylization
             int styleInDecimal = HexToDecimal(tb_BL.Text);
-            StringBuilder bytes = new StringBuilder();
             string byteRepr = "";
             int remainder;
             
@@ -223,8 +232,17 @@ namespace PixelDrawer
             int red = byteRepr[1] == '1' ? 255 : 0;
             int green = byteRepr[2] == '1' ? 255 : 0;
             int blue = byteRepr[3] == '1' ? 255 : 0;
-
             Color textColor = Color.FromArgb(red, green, blue);
+
+            red = byteRepr[5] == '1' ? 255 : 0;
+            green = byteRepr[6] == '1' ? 255 : 0;
+            blue = byteRepr[7] == '1' ? 255 : 0;
+            Color textBackColor = Color.FromArgb(red, green, blue);
+
+            resultForm.Tb_General.SelectionStart = resultForm.Tb_General.Text.Length - (resultForm.Tb_General.Text.Length - space.Length);
+            resultForm.Tb_General.SelectionLength = resultForm.Tb_General.Text.Length - space.Length;
+            resultForm.Tb_General.SelectionBackColor = textBackColor;
+            
             resultForm.Tb_General.ForeColor = textColor;
 
             if (byteRepr[0] == '1')
@@ -339,13 +357,29 @@ namespace PixelDrawer
                 MessageBox.Show("Смени на графичен режим");
                 return;
             }
+
             int columns = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int rows = HexToDecimal(tb_DL.Text);
 
-            //points.Add(new Point(rows, columns));
-            ////ResultForm resultForm = new ResultForm(rows, columns, ratioX, ratioY);
-            //ResultForm resultForm = new ResultForm(points, ratioX, ratioY);
-            //ResultForm.points;
+            int styleInDecimal = HexToDecimal(tb_AL.Text);
+            string byteRepr = "";
+            int remainder;
+
+            while (styleInDecimal > 0)
+            {
+                remainder = styleInDecimal % 2;
+                styleInDecimal /= 2;
+                byteRepr = string.Format(@"{0}{1}", remainder, byteRepr);
+            }
+            int remainingBits = 8 - byteRepr.Length;
+            byteRepr = new string('0', remainingBits) + byteRepr;
+
+            int red = byteRepr[1] == '1' ? 255 : 0;
+            int green = byteRepr[2] == '1' ? 255 : 0;
+            int blue = byteRepr[3] == '1' ? 255 : 0;
+            Color pixelColor = Color.FromArgb(red, green, blue);
+
+            resultForm.Color = pixelColor;
             resultForm.Points.Add(new Point(columns, rows));
             resultForm.ShowDialog();
         }
@@ -693,7 +727,7 @@ namespace PixelDrawer
             tb_AL.ReadOnly = false;
             tb_AL.BackColor = Color.White;
 
-            tb_BH.Text = string.Empty;
+            tb_BH.Text = "00";
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
