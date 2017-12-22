@@ -72,6 +72,7 @@ namespace PixelDrawer
                     DrawDot();
                     break;
                 case 10:
+                    ReadDot();
                     break;
                 case 11:
                     break;
@@ -379,11 +380,37 @@ namespace PixelDrawer
             int blue = byteRepr[3] == '1' ? 255 : 0;
             Color pixelColor = Color.FromArgb(red, green, blue);
 
-            resultForm.Color = pixelColor;
+            //resultForm.Color = pixelColor;
             resultForm.Points.Add(new Point(columns, rows));
+            resultForm.ColorsDictionary.Add(new Point(columns, rows), pixelColor);
+
             resultForm.ShowDialog();
         }
 
+        //Четене на точка
+        private void ReadDot()
+        {
+            if (isTextMode)
+            {
+                MessageBox.Show("Смени на графичен режим");
+                return;
+            }
+
+            int columns = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
+            int rows = HexToDecimal(tb_DL.Text);
+            Point point = new Point(columns, rows);
+            Color color = new Color();
+
+            if (resultForm.Points.Contains(point))
+            {
+                resultForm.ColorsDictionary.TryGetValue(point, out color);
+                MessageBox.Show(string.Format(@"Пиксел на позиция X:{0} Y:{1} с цвят:{2}", point.X.ToString(), point.Y.ToString(), color.ToString()));
+            }
+            else
+            {
+                MessageBox.Show("Няма начертан такъв пиксел");
+            }
+        }
         #endregion
 
         //Изчислява резолюцията на програмата спрямо монитора разделена на зададения режим

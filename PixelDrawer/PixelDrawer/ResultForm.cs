@@ -25,14 +25,16 @@ namespace PixelDrawer
         private float ratioY;
         private Color color = Color.Black;
         private List<Point> points;
+        private Dictionary<Point, Color> colorsDictionary;
         private bool isTextMode;
-
+        private int pointsDone;
         #endregion
 
         #region Constructors
         public ResultForm()
         {
             Points = new List<Point>();
+            ColorsDictionary = new Dictionary<Point, Color>();
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
@@ -58,6 +60,7 @@ namespace PixelDrawer
         public float RatioY { get => ratioY; set => ratioY = value; }
         public Color Color { get => color; set =>  color = value; }
         public List<Point> Points { get => points; set => points = value; }
+        public Dictionary<Point,Color> ColorsDictionary { get => colorsDictionary; set => colorsDictionary = value; }
         public bool IsTextMode { get => isTextMode; set => isTextMode = value; }
         public RichTextBox Tb_General
         {
@@ -97,16 +100,17 @@ namespace PixelDrawer
 
         private void OnPaint(object sender, PaintEventArgs e)
         {
-            Brush brush = new SolidBrush(Color);
+            //Brush brush = new SolidBrush(Color);
             // SystemBrushes.ControlLightLight
+            Color color = Color.White;
             foreach (Point p in Points)
             {
+                ColorsDictionary.TryGetValue(p, out color);
+                Brush brush = new SolidBrush(color);
                 e.Graphics.FillRectangle(brush,
-                (float)(p.X * RatioX),
-                (float)(p.Y * RatioY),
-                (float)RatioX,
-                (float)RatioY);
-            }  
+                (p.X * RatioX),(p.Y * RatioY),
+                RatioX,RatioY);
+            } 
         }
         #endregion
     }
