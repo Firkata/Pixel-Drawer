@@ -58,6 +58,7 @@
             this.lbl_DL = new System.Windows.Forms.Label();
             this.lbl_DH = new System.Windows.Forms.Label();
             this.lbl_Help = new System.Windows.Forms.Label();
+            this.btn_biosinfo = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // radioButton1
@@ -346,11 +347,22 @@
             this.lbl_Help.TabIndex = 47;
             this.lbl_Help.Text = "Help";
             // 
+            // btn_biosinfo
+            // 
+            this.btn_biosinfo.Location = new System.Drawing.Point(476, 305);
+            this.btn_biosinfo.Name = "btn_biosinfo";
+            this.btn_biosinfo.Size = new System.Drawing.Size(125, 23);
+            this.btn_biosinfo.TabIndex = 48;
+            this.btn_biosinfo.Text = "Bios Information";
+            this.btn_biosinfo.UseVisualStyleBackColor = true;
+            this.btn_biosinfo.Click += new System.EventHandler(this.btn_biosinfo_Click);
+            // 
             // UserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(694, 332);
+            this.Controls.Add(this.btn_biosinfo);
             this.Controls.Add(this.lbl_Help);
             this.Controls.Add(this.tb_DH);
             this.Controls.Add(this.tb_DL);
@@ -418,6 +430,7 @@
         private System.Windows.Forms.Label lbl_DL;
         private System.Windows.Forms.Label lbl_DH;
         private System.Windows.Forms.Label lbl_Help;
+        private System.Windows.Forms.Button btn_biosinfo;
     }
 }
 
