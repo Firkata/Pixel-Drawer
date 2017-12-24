@@ -87,6 +87,8 @@ namespace PixelDrawer
             radioButton5.Enabled = isActive;
             radioButton6.Enabled = isActive;
             radioButton7.Enabled = isActive;
+            radioButton9.Enabled = !isActive;
+            radioButton10.Enabled = !isActive;
         }
         
         #region Tasks
@@ -381,9 +383,16 @@ namespace PixelDrawer
             Color pixelColor = Color.FromArgb(red, green, blue);
 
             //resultForm.Color = pixelColor;
-            resultForm.Points.Add(new Point(columns, rows));
-            resultForm.ColorsDictionary.Add(new Point(columns, rows), pixelColor);
-
+            Point point = new Point(columns, rows);
+            if (!resultForm.Points.Contains(point))
+            {
+                resultForm.Points.Add(new Point(columns, rows));
+                resultForm.ColorsDictionary.Add(new Point(columns, rows), pixelColor);
+            }
+            else
+            {
+                MessageBox.Show("Има пиксел на тази позиция");
+            }
             resultForm.ShowDialog();
         }
 
@@ -404,7 +413,7 @@ namespace PixelDrawer
             if (resultForm.Points.Contains(point))
             {
                 resultForm.ColorsDictionary.TryGetValue(point, out color);
-                MessageBox.Show(string.Format(@"Пиксел на позиция X:{0} Y:{1} с цвят:{2}", point.X.ToString(), point.Y.ToString(), color.ToString()));
+                MessageBox.Show(string.Format(@"Пиксел на позиция X:{0} Y:{1} е с цвят: [{2},{3},{4}]", point.X.ToString(), point.Y.ToString(), color.R, color.G, color.B));
             }
             else
             {
