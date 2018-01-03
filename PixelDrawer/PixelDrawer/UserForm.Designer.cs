@@ -59,12 +59,15 @@
             this.lbl_DH = new System.Windows.Forms.Label();
             this.lbl_Help = new System.Windows.Forms.Label();
             this.btn_biosinfo = new System.Windows.Forms.Button();
+            this.radioButton12 = new System.Windows.Forms.RadioButton();
+            this.radioButton13 = new System.Windows.Forms.RadioButton();
+            this.radioButton14 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(12, 26);
+            this.radioButton1.Location = new System.Drawing.Point(12, 21);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(157, 17);
             this.radioButton1.TabIndex = 1;
@@ -75,7 +78,7 @@
             // 
             // btn_Submit
             // 
-            this.btn_Submit.Location = new System.Drawing.Point(607, 305);
+            this.btn_Submit.Location = new System.Drawing.Point(607, 319);
             this.btn_Submit.Name = "btn_Submit";
             this.btn_Submit.Size = new System.Drawing.Size(75, 23);
             this.btn_Submit.TabIndex = 3;
@@ -86,7 +89,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(12, 49);
+            this.radioButton2.Location = new System.Drawing.Point(12, 44);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(61, 17);
             this.radioButton2.TabIndex = 14;
@@ -98,7 +101,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(12, 72);
+            this.radioButton3.Location = new System.Drawing.Point(12, 67);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(164, 17);
             this.radioButton3.TabIndex = 15;
@@ -110,7 +113,7 @@
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(12, 95);
+            this.radioButton4.Location = new System.Drawing.Point(12, 90);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(150, 17);
             this.radioButton4.TabIndex = 16;
@@ -122,84 +125,84 @@
             // radioButton9
             // 
             this.radioButton9.AutoSize = true;
-            this.radioButton9.Location = new System.Drawing.Point(12, 210);
+            this.radioButton9.Location = new System.Drawing.Point(12, 205);
             this.radioButton9.Name = "radioButton9";
-            this.radioButton9.Size = new System.Drawing.Size(89, 17);
+            this.radioButton9.Size = new System.Drawing.Size(163, 17);
             this.radioButton9.TabIndex = 27;
             this.radioButton9.TabStop = true;
-            this.radioButton9.Text = "Запис Точка";
+            this.radioButton9.Text = "Запис на символ и атрибут";
             this.radioButton9.UseVisualStyleBackColor = true;
             this.radioButton9.CheckedChanged += new System.EventHandler(this.radioButton9_CheckedChanged);
             // 
             // radioButton8
             // 
             this.radioButton8.AutoSize = true;
-            this.radioButton8.Location = new System.Drawing.Point(12, 187);
+            this.radioButton8.Location = new System.Drawing.Point(12, 182);
             this.radioButton8.Name = "radioButton8";
-            this.radioButton8.Size = new System.Drawing.Size(102, 17);
+            this.radioButton8.Size = new System.Drawing.Size(169, 17);
             this.radioButton8.TabIndex = 26;
             this.radioButton8.TabStop = true;
-            this.radioButton8.Text = "Смяна палитра";
+            this.radioButton8.Text = "Четене на символ и атрибут";
             this.radioButton8.UseVisualStyleBackColor = true;
             this.radioButton8.CheckedChanged += new System.EventHandler(this.radioButton8_CheckedChanged);
             // 
             // radioButton7
             // 
             this.radioButton7.AutoSize = true;
-            this.radioButton7.Location = new System.Drawing.Point(12, 164);
+            this.radioButton7.Location = new System.Drawing.Point(12, 159);
             this.radioButton7.Name = "radioButton7";
-            this.radioButton7.Size = new System.Drawing.Size(112, 17);
+            this.radioButton7.Size = new System.Drawing.Size(132, 17);
             this.radioButton7.TabIndex = 25;
             this.radioButton7.TabStop = true;
-            this.radioButton7.Text = "Запис на символ";
+            this.radioButton7.Text = "Преместване надолу";
             this.radioButton7.UseVisualStyleBackColor = true;
             this.radioButton7.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
             // 
             // radioButton6
             // 
             this.radioButton6.AutoSize = true;
-            this.radioButton6.Location = new System.Drawing.Point(12, 141);
+            this.radioButton6.Location = new System.Drawing.Point(12, 136);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(163, 17);
+            this.radioButton6.Size = new System.Drawing.Size(132, 17);
             this.radioButton6.TabIndex = 24;
             this.radioButton6.TabStop = true;
-            this.radioButton6.Text = "Запис на символ и атрибут";
+            this.radioButton6.Text = "Преместване нагоре";
             this.radioButton6.UseVisualStyleBackColor = true;
             this.radioButton6.CheckedChanged += new System.EventHandler(this.radioButton6_CheckedChanged);
             // 
             // radioButton5
             // 
             this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(12, 118);
+            this.radioButton5.Location = new System.Drawing.Point(12, 113);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(169, 17);
+            this.radioButton5.Size = new System.Drawing.Size(168, 17);
             this.radioButton5.TabIndex = 23;
             this.radioButton5.TabStop = true;
-            this.radioButton5.Text = "Четене на символ и атрибут";
+            this.radioButton5.Text = "Задаване активна страница";
             this.radioButton5.UseVisualStyleBackColor = true;
             this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
             // 
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(12, 256);
+            this.radioButton11.Location = new System.Drawing.Point(12, 251);
             this.radioButton11.Name = "radioButton11";
-            this.radioButton11.Size = new System.Drawing.Size(91, 17);
+            this.radioButton11.Size = new System.Drawing.Size(102, 17);
             this.radioButton11.TabIndex = 30;
             this.radioButton11.TabStop = true;
-            this.radioButton11.Text = "Информация";
+            this.radioButton11.Text = "Смяна палитра";
             this.radioButton11.UseVisualStyleBackColor = true;
             this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton11_CheckedChanged);
             // 
             // radioButton10
             // 
             this.radioButton10.AutoSize = true;
-            this.radioButton10.Location = new System.Drawing.Point(12, 233);
+            this.radioButton10.Location = new System.Drawing.Point(12, 228);
             this.radioButton10.Name = "radioButton10";
-            this.radioButton10.Size = new System.Drawing.Size(93, 17);
+            this.radioButton10.Size = new System.Drawing.Size(112, 17);
             this.radioButton10.TabIndex = 29;
             this.radioButton10.TabStop = true;
-            this.radioButton10.Text = "Четене точка";
+            this.radioButton10.Text = "Запис на символ";
             this.radioButton10.UseVisualStyleBackColor = true;
             this.radioButton10.CheckedChanged += new System.EventHandler(this.radioButton10_CheckedChanged);
             // 
@@ -349,7 +352,7 @@
             // 
             // btn_biosinfo
             // 
-            this.btn_biosinfo.Location = new System.Drawing.Point(476, 305);
+            this.btn_biosinfo.Location = new System.Drawing.Point(476, 319);
             this.btn_biosinfo.Name = "btn_biosinfo";
             this.btn_biosinfo.Size = new System.Drawing.Size(125, 23);
             this.btn_biosinfo.TabIndex = 48;
@@ -357,11 +360,50 @@
             this.btn_biosinfo.UseVisualStyleBackColor = true;
             this.btn_biosinfo.Click += new System.EventHandler(this.btn_biosinfo_Click);
             // 
+            // radioButton12
+            // 
+            this.radioButton12.AutoSize = true;
+            this.radioButton12.Location = new System.Drawing.Point(12, 274);
+            this.radioButton12.Name = "radioButton12";
+            this.radioButton12.Size = new System.Drawing.Size(102, 17);
+            this.radioButton12.TabIndex = 49;
+            this.radioButton12.TabStop = true;
+            this.radioButton12.Text = "Запис на точка";
+            this.radioButton12.UseVisualStyleBackColor = true;
+            this.radioButton12.CheckedChanged += new System.EventHandler(this.radioButton12_CheckedChanged);
+            // 
+            // radioButton13
+            // 
+            this.radioButton13.AutoSize = true;
+            this.radioButton13.Location = new System.Drawing.Point(12, 297);
+            this.radioButton13.Name = "radioButton13";
+            this.radioButton13.Size = new System.Drawing.Size(108, 17);
+            this.radioButton13.TabIndex = 50;
+            this.radioButton13.TabStop = true;
+            this.radioButton13.Text = "Четене на точка";
+            this.radioButton13.UseVisualStyleBackColor = true;
+            this.radioButton13.CheckedChanged += new System.EventHandler(this.radioButton13_CheckedChanged);
+            // 
+            // radioButton14
+            // 
+            this.radioButton14.AutoSize = true;
+            this.radioButton14.Location = new System.Drawing.Point(12, 320);
+            this.radioButton14.Name = "radioButton14";
+            this.radioButton14.Size = new System.Drawing.Size(91, 17);
+            this.radioButton14.TabIndex = 51;
+            this.radioButton14.TabStop = true;
+            this.radioButton14.Text = "Информация";
+            this.radioButton14.UseVisualStyleBackColor = true;
+            this.radioButton14.CheckedChanged += new System.EventHandler(this.radioButton14_CheckedChanged);
+            // 
             // UserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 332);
+            this.ClientSize = new System.Drawing.Size(694, 348);
+            this.Controls.Add(this.radioButton14);
+            this.Controls.Add(this.radioButton13);
+            this.Controls.Add(this.radioButton12);
             this.Controls.Add(this.btn_biosinfo);
             this.Controls.Add(this.lbl_Help);
             this.Controls.Add(this.tb_DH);
@@ -431,6 +473,9 @@
         private System.Windows.Forms.Label lbl_DH;
         private System.Windows.Forms.Label lbl_Help;
         private System.Windows.Forms.Button btn_biosinfo;
+        private System.Windows.Forms.RadioButton radioButton12;
+        private System.Windows.Forms.RadioButton radioButton13;
+        private System.Windows.Forms.RadioButton radioButton14;
     }
 }
 

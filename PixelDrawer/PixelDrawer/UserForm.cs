@@ -61,20 +61,26 @@ namespace PixelDrawer
                 case 5:
                     break;
                 case 6:
-                    InsertStyledText();
                     break;
                 case 7:
                     break;
                 case 8:
-                    ChangeScreenColor(tb_BL.Text);
                     break;
                 case 9:
-                    DrawDot();
+                    InsertStyledText();
                     break;
                 case 10:
-                    ReadDot();
                     break;
                 case 11:
+                    ChangeScreenColor(tb_BL.Text);
+                    break;
+                case 12:
+                    DrawDot();
+                    break;
+                case 13:
+                    ReadDot();
+                    break;
+                case 14:
                     break;
             }
         }
@@ -87,8 +93,12 @@ namespace PixelDrawer
             radioButton5.Enabled = isActive;
             radioButton6.Enabled = isActive;
             radioButton7.Enabled = isActive;
-            radioButton9.Enabled = !isActive;
-            radioButton10.Enabled = !isActive;
+            radioButton8.Enabled = isActive;
+            radioButton9.Enabled = isActive;
+            radioButton10.Enabled = isActive;
+            radioButton11.Enabled = !isActive;
+            radioButton12.Enabled = !isActive;
+            radioButton13.Enabled = !isActive;
         }
         
         #region Tasks
@@ -668,10 +678,151 @@ namespace PixelDrawer
                 "В CH и CL се получава информация за вида на курсора.");
         }
 
-        //Четене на символ и атрибут
+        //Задаване активна страница
         private void radioButton5_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 5;
+            tb_AH.Text = "05";
+            tb_AH.ReadOnly = true;
+            tb_AH.BackColor = Color.LightGray;
+
+            tb_AL.Text = "00";
+            tb_AL.ReadOnly = false;
+            tb_AL.BackColor = Color.White;
+
+            tb_BH.Text = string.Empty;
+            tb_BH.ReadOnly = true;
+            tb_BH.BackColor = Color.LightSlateGray;
+
+            tb_BL.Text = string.Empty;
+            tb_BL.ReadOnly = true;
+            tb_BL.BackColor = Color.LightSlateGray;
+
+            tb_CH.Text = string.Empty;
+            tb_CH.ReadOnly = true;
+            tb_CH.BackColor = Color.LightSlateGray;
+
+            tb_CL.Text = string.Empty;
+            tb_CL.ReadOnly = true;
+            tb_CL.BackColor = Color.LightSlateGray;
+
+            tb_DH.Text = string.Empty;
+            tb_DH.ReadOnly = true;
+            tb_DH.BackColor = Color.LightSlateGray;
+
+            tb_DL.Text = string.Empty;
+            tb_DL.ReadOnly = true;
+            tb_DL.BackColor = Color.LightSlateGray;
+
+            lbl_Help.Text = string.Format("05H." +
+                Environment.NewLine +
+                "Има смисъл само за текстов режим.Номера на видеостраницата се задава в AL. В 40-колонните режими се задава стойност от 0 до 7, а в 80-колонните от 0 до 3");
+        }
+
+        //Преместване нагоре
+        private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        {
+            buttonCheckedIndex = 6;
+            tb_AH.Text = "06";
+            tb_AH.ReadOnly = true;
+            tb_AH.BackColor = Color.LightGray;
+
+            tb_AL.Text = "00";
+            tb_AL.ReadOnly = false;
+            tb_AL.BackColor = Color.White;
+
+            tb_BH.Text = "00";
+            tb_BH.ReadOnly = false;
+            tb_BH.BackColor = Color.White;
+
+            tb_BL.Text = string.Empty;
+            tb_BL.ReadOnly = true;
+            tb_BL.BackColor = Color.LightSlateGray;
+
+            tb_CH.Text = "00";
+            tb_CH.ReadOnly = false;
+            tb_CH.BackColor = Color.White;
+
+            tb_CL.Text = "00";
+            tb_CL.ReadOnly = false;
+            tb_CL.BackColor = Color.White;
+
+            tb_DH.Text = "00";
+            tb_DH.ReadOnly = false;
+            tb_DH.BackColor = Color.White;
+
+            tb_DL.Text = "00";
+            tb_DL.ReadOnly = false;
+            tb_DL.BackColor = Color.White;
+
+            lbl_Help.Text = string.Format("06H." +
+                Environment.NewLine +
+                "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта нагоре указан брой редове." +
+                Environment.NewLine +
+                "AL - брой редове за превъртане" +
+                Environment.NewLine +
+                "BH - начин за запълване (атрибути и цвят)" +
+                Environment.NewLine +
+                "CH, CL - ред и колона на горния ляв ъгъл" +
+                Environment.NewLine +
+                "DH, DL - ред и колона на долния ляв ъгъл"
+                );
+        }
+
+        //Преместване надолу
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+            buttonCheckedIndex = 7;
+            tb_AH.Text = "07";
+            tb_AH.ReadOnly = true;
+            tb_AH.BackColor = Color.LightGray;
+
+            tb_AL.Text = "00";
+            tb_AL.ReadOnly = false;
+            tb_AL.BackColor = Color.White;
+
+            tb_BH.Text = "00";
+            tb_BH.ReadOnly = false;
+            tb_BH.BackColor = Color.White;
+
+            tb_BL.Text = string.Empty;
+            tb_BL.ReadOnly = true;
+            tb_BL.BackColor = Color.LightSlateGray;
+
+            tb_CH.Text = "00";
+            tb_CH.ReadOnly = false;
+            tb_CH.BackColor = Color.White;
+
+            tb_CL.Text = "00";
+            tb_CL.ReadOnly = false;
+            tb_CL.BackColor = Color.White;
+
+            tb_DH.Text = "00";
+            tb_DH.ReadOnly = false;
+            tb_DH.BackColor = Color.White;
+
+            tb_DL.Text = "00";
+            tb_DL.ReadOnly = false;
+            tb_DL.BackColor = Color.White;
+
+            lbl_Help.Text = string.Format("06H." +
+                Environment.NewLine +
+                "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта надолу указан брой редове." +
+                Environment.NewLine +
+                "AL - брой редове за превъртане" +
+                Environment.NewLine +
+                "BH - начин за запълване (атрибути и цвят)" +
+                Environment.NewLine +
+                "CH, CL - ред и колона на горния ляв ъгъл" +
+                Environment.NewLine +
+                "DH, DL - ред и колона на долния ляв ъгъл"
+                );
+        }
+
+        //Четене на символ и атрибут
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        {
+            buttonCheckedIndex = 8;
             tb_AH.Text = "08";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -710,9 +861,9 @@ namespace PixelDrawer
         }
 
         //Запис на символ и атрибут
-        private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        private void radioButton9_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 6;
+            buttonCheckedIndex = 9;
             tb_AH.Text = "09";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -752,9 +903,9 @@ namespace PixelDrawer
         }
 
         //Запис на символ
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        private void radioButton10_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 7;
+            buttonCheckedIndex = 10;
             tb_AH.Text = "0A";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -794,9 +945,9 @@ namespace PixelDrawer
         }
 
         //Смяна палитра
-        private void radioButton8_CheckedChanged(object sender, EventArgs e)
+        private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 8;
+            buttonCheckedIndex = 11;
             tb_AH.Text = "0B";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -845,9 +996,9 @@ namespace PixelDrawer
         }
 
         //Запис Точка
-        private void radioButton9_CheckedChanged(object sender, EventArgs e)
+        private void radioButton12_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 9;
+            buttonCheckedIndex = 12;
             tb_AH.Text = "0C";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -896,9 +1047,9 @@ namespace PixelDrawer
         }
 
         //Четене точка
-        private void radioButton10_CheckedChanged(object sender, EventArgs e)
+        private void radioButton13_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 10;
+            buttonCheckedIndex = 13;
             tb_AH.Text = "0D";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -939,9 +1090,9 @@ namespace PixelDrawer
         }
 
         //Информация
-        private void radioButton11_CheckedChanged(object sender, EventArgs e)
+        private void radioButton14_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 11;
+            buttonCheckedIndex = 14;
             tb_AH.Text = "0F";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
