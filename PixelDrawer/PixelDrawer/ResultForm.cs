@@ -28,6 +28,7 @@ namespace PixelDrawer
         private Dictionary<Point, Color> colorsDictionary;
         private bool isTextMode;
         private int pointsDone;
+        private RichTextBox selectedPage;
         #endregion
 
         #region Constructors
@@ -62,17 +63,10 @@ namespace PixelDrawer
         public List<Point> Points { get => points; set => points = value; }
         public Dictionary<Point,Color> ColorsDictionary { get => colorsDictionary; set => colorsDictionary = value; }
         public bool IsTextMode { get => isTextMode; set => isTextMode = value; }
-        public RichTextBox Tb_General
-        {
-            get
-            {
-                return tb_General;
-            }
-            set
-            {
-                tb_General = value;
-            }
-        }
+        public RichTextBox Tb_General { get => tb_General; set => tb_General = value; }
+        public RichTextBox Tb_General2 { get => tb_General2; set => tb_General2 = value; }
+        public RichTextBox Tb_General3 { get => tb_General3; set => tb_General3 = value; }
+        public RichTextBox Tb_General4 { get => tb_General4; set => tb_General4 = value; }
         public Cursor Position
         {
             get
@@ -85,6 +79,7 @@ namespace PixelDrawer
             }
         }
         public bool EscPressed { get; set; }
+        public RichTextBox SelectedPage { get => selectedPage; set => selectedPage = value; }
         #endregion
 
         #region EventHandlers

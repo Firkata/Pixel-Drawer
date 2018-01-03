@@ -27,6 +27,7 @@ namespace PixelDrawer
         public bool isModeSet = false;
         public bool isTextMode = true;
         public ResultForm resultForm;
+        public int pageNumber = 0;
         #endregion
 
         public UserForm()
@@ -59,6 +60,7 @@ namespace PixelDrawer
                     GetCaretPosition();
                     break;
                 case 5:
+                    SelectedPage();
                     break;
                 case 6:
                     break;
@@ -96,7 +98,7 @@ namespace PixelDrawer
             radioButton8.Enabled = isActive;
             radioButton9.Enabled = isActive;
             radioButton10.Enabled = isActive;
-            radioButton11.Enabled = !isActive;
+            radioButton11.Enabled = isActive;
             radioButton12.Enabled = !isActive;
             radioButton13.Enabled = !isActive;
         }
@@ -192,6 +194,28 @@ namespace PixelDrawer
             MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}",videoPageNum, Environment.NewLine, cursorRow, cursorCol));
         }
 
+        private void SelectedPage()
+        {
+            int.TryParse(tb_AL.Text, out pageNumber);
+            switch (pageNumber)
+            {
+                case 1:
+                    resultForm.SelectedPage = resultForm.Tb_General;
+                    break;
+                case 2:
+                    resultForm.SelectedPage = resultForm.Tb_General2;
+                    break;
+                case 3:
+                    resultForm.SelectedPage = resultForm.Tb_General3;
+                    break;
+                case 4:
+                    resultForm.SelectedPage = resultForm.Tb_General4;
+                    break;
+                default:
+                    MessageBox.Show("Избери страница от 1 до 4");
+                    break;
+            }
+        }
         //Запис на символ и атрибут
         private void InsertStyledText()
         {
