@@ -64,9 +64,9 @@ namespace PixelDrawer
         public Dictionary<Point,Color> ColorsDictionary { get => colorsDictionary; set => colorsDictionary = value; }
         public bool IsTextMode { get => isTextMode; set => isTextMode = value; }
         public RichTextBox Tb_General { get => tb_General; set => tb_General = value; }
+        public RichTextBox Tb_General1 { get => tb_General1; set => tb_General1 = value; }
         public RichTextBox Tb_General2 { get => tb_General2; set => tb_General2 = value; }
         public RichTextBox Tb_General3 { get => tb_General3; set => tb_General3 = value; }
-        public RichTextBox Tb_General4 { get => tb_General4; set => tb_General4 = value; }
         public Cursor Position
         {
             get
