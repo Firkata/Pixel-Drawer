@@ -274,6 +274,7 @@ namespace PixelDrawer
                     break;
             }
         }
+
         //Запис на символ и атрибут
         private void InsertStyledText()
         {
@@ -349,7 +350,7 @@ namespace PixelDrawer
                     break;
             }
 
-            resultForm.SelectedPage = boxes[videoPageNum];
+            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледане
 
             text.Append(space);
             text.Append(generatedText);
@@ -358,8 +359,7 @@ namespace PixelDrawer
             boxes[displayPage].Text = resultForm.Text.Insert(0, text.ToString());
             boxes[displayPage].SelectionStart = selectionStart;
             boxes[displayPage].SelectionLength = 0;
-
-            // TODO: Implement text stylization
+            
             int styleInDecimal = HexToDecimal(tb_BL.Text);
             string byteRepr = "";
             int remainder;
