@@ -292,6 +292,11 @@ namespace PixelDrawer
             char displayCharacter = (char)HexToDecimal(tb_AL.Text);
             int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int displayPage = HexToDecimal(tb_BH.Text);
+            if(displayPage <0 || displayPage > 3)
+            {
+                MessageBox.Show("Изберете страница от 0 до 3");
+                return;
+            }
             string generatedText = "";
             for (int i = 0; i < characterCount; i++)
             {
@@ -400,13 +405,13 @@ namespace PixelDrawer
                     resultForm.Tb_General = resultForm.SelectedPage;
                     break;
                 case 1:
-                    resultForm.Tb_General = resultForm.SelectedPage;
+                    resultForm.Tb_General1 = resultForm.SelectedPage;
                     break;
                 case 2:
-                    resultForm.Tb_General = resultForm.SelectedPage;
+                    resultForm.Tb_General2 = resultForm.SelectedPage;
                     break;
                 case 3:
-                    resultForm.Tb_General = resultForm.SelectedPage;
+                    resultForm.Tb_General3 = resultForm.SelectedPage;
                     break;
                 default:
                     break;
@@ -486,27 +491,57 @@ namespace PixelDrawer
                         MessageBox.Show("Невалидни данни");
                         return;
                 }
+
                 if (isTextMode)
                 {
-                    int selectedPage = 0;
-                    int.TryParse(tb_BH.Text, out selectedPage);
-                    switch (selectedPage)
+                    RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
+                    resultForm.Tb_General.Hide();
+                    resultForm.Tb_General1.Hide();
+                    resultForm.Tb_General2.Hide();
+                    resultForm.Tb_General3.Hide();
+
+                    int displayPageNum = 0;
+                    int.TryParse(tb_BH.Text, out displayPageNum);
+                    resultForm.SelectedPage = boxes[videoPageNum];
+
+                    switch (displayPageNum)
                     {
                         case 0:
-                            resultForm.Tb_General.BackColor = color;
+                            boxes[videoPageNum].BackColor = color;
                             break;
                         case 1:
-                            resultForm.Tb_General1.BackColor = color;
+                            boxes[videoPageNum].BackColor = color;
                             break;
                         case 2:
-                            resultForm.Tb_General2.BackColor = color;
+                            boxes[videoPageNum].BackColor = color;
                             break;
                         case 3:
-                            resultForm.Tb_General3.BackColor = color;
+                            boxes[videoPageNum].BackColor = color;
+                            break;
+                        default:
+                            MessageBox.Show("Изберете страница от 0 до 3");
+                            return;
+                    }
+
+                    switch (videoPageNum)
+                    {
+                        case 0:
+                            resultForm.Tb_General = resultForm.SelectedPage;
+                            break;
+                        case 1:
+                            resultForm.Tb_General1 = resultForm.SelectedPage;
+                            break;
+                        case 2:
+                            resultForm.Tb_General2 = resultForm.SelectedPage;
+                            break;
+                        case 3:
+                            resultForm.Tb_General3 = resultForm.SelectedPage;
                             break;
                         default:
                             break;
                     }
+
+                    resultForm.SelectedPage.Show();
                 }
                 else
                 {
