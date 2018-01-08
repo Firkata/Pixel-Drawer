@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -181,24 +182,32 @@ namespace PixelDrawer
                         resultForm.Tb_General.ReadOnly = true;
                         resultForm.Tb_General.Dock = DockStyle.Fill;
                         resultForm.Controls.Add(resultForm.Tb_General);
+                        resultForm.Tb_General.ForeColor = Color.White;
+                        resultForm.Tb_General.BackColor = Color.Black;
 
                         resultForm.Tb_General1 = new RichTextBox();
                         resultForm.Tb_General1.Font = new Font(resultForm.Tb_General1.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General1.ReadOnly = true;
                         resultForm.Tb_General1.Dock = DockStyle.Fill;
                         resultForm.Controls.Add(resultForm.Tb_General1);
+                        resultForm.Tb_General1.ForeColor = Color.White;
+                        resultForm.Tb_General1.BackColor = Color.Black;
 
                         resultForm.Tb_General2 = new RichTextBox();
                         resultForm.Tb_General2.Font = new Font(resultForm.Tb_General2.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General2.ReadOnly = true;
                         resultForm.Tb_General2.Dock = DockStyle.Fill;
                         resultForm.Controls.Add(resultForm.Tb_General2);
+                        resultForm.Tb_General2.ForeColor = Color.White;
+                        resultForm.Tb_General2.BackColor = Color.Black;
 
                         resultForm.Tb_General3 = new RichTextBox();
                         resultForm.Tb_General3.Font = new Font(resultForm.Tb_General3.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General3.ReadOnly = true;
                         resultForm.Tb_General3.Dock = DockStyle.Fill;
                         resultForm.Controls.Add(resultForm.Tb_General3);
+                        resultForm.Tb_General3.ForeColor = Color.White;
+                        resultForm.Tb_General3.BackColor = Color.Black;
                     }
                 }
             }
@@ -211,40 +220,79 @@ namespace PixelDrawer
         //Позициониране на курсора
         private void PositionCursor()
         {
-            videoPageNum = !string.IsNullOrEmpty(tb_BH.Text) ? int.Parse(tb_BH.Text) : 0;
+            videoPageNum = 0;
+            if(!string.IsNullOrEmpty(tb_BH.Text))
+            {
+                if (!int.TryParse(tb_BH.Text, out videoPageNum))
+                {
+                    MessageBox.Show("Изберете валидна видеостраница от 0 до 3");
+                    tb_BH.Text = "00";
+                    return;
+                }
+            }
 
+            if(!Regex.IsMatch(tb_DH.Text, @"^\d+$") || !Regex.IsMatch(tb_DL.Text, @"^\d+$"))
+            {
+                MessageBox.Show("Въведете правилни колона и ред");
+                tb_DH.Text = "00";
+                tb_DL.Text = "00";
+                return;
+            }
             switch (videoPageNum)
             {
                 case 0:
-                    cursorRow = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
+                    cursorCol = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow, cursorCol));
                     break;
                 case 1:
-                    cursorRow1 = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol1 = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow1 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
+                    cursorCol1 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow1, cursorCol1));
                     break;
                 case 2:
-                    cursorRow2 = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol2 = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow2 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
+                    cursorCol2 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow2, cursorCol2));
                     break;
                 case 3:
-                    cursorRow3 = !string.IsNullOrEmpty(tb_DH.Text) ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol3 = !string.IsNullOrEmpty(tb_DL.Text) ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow3 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
+                    cursorCol3 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow3, cursorCol3));
                     break;
                 default:
                     break;
             }
-
         }
 
         //Информация за курсора
         private void GetCaretPosition()
         {
-            MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow, cursorCol));
+            int desiredVideoPage = 0;
+            if(!int.TryParse(tb_BH.Text, out desiredVideoPage))
+            {
+                MessageBox.Show("Изберете валидна видеостраница от 0 до 3");
+                return;
+            }
+
+            switch (desiredVideoPage)
+            {
+                case 0:
+                    MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", desiredVideoPage, Environment.NewLine, cursorRow, cursorCol));
+                    break;
+                case 1:
+                    MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", desiredVideoPage, Environment.NewLine, cursorRow1, cursorCol1));
+                    break;
+                case 2:
+                    MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", desiredVideoPage, Environment.NewLine, cursorRow2, cursorCol2));
+                    break;
+                case 3:
+                    MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", desiredVideoPage, Environment.NewLine, cursorRow3, cursorCol3));
+                    break;
+                default:
+                    MessageBox.Show("Изберете валидна видеостраница от 0 до 3");
+                    break;
+            }
         }
 
         //Задаване активна страница
@@ -355,8 +403,6 @@ namespace PixelDrawer
                     break;
             }
 
-            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледане
-
             text.Append(space);
             text.Append(generatedText);
 
@@ -392,6 +438,9 @@ namespace PixelDrawer
             boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
             boxes[displayPage].SelectionBackColor = textBackColor;
 
+            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледане
+
+
             boxes[displayPage].ForeColor = textColor;
 
             if (byteRepr[0] == '1')
@@ -399,23 +448,6 @@ namespace PixelDrawer
                 Blink(textColor);
             }
 
-            switch (videoPageNum)
-            {
-                case 0:
-                    resultForm.Tb_General = resultForm.SelectedPage;
-                    break;
-                case 1:
-                    resultForm.Tb_General1 = resultForm.SelectedPage;
-                    break;
-                case 2:
-                    resultForm.Tb_General2 = resultForm.SelectedPage;
-                    break;
-                case 3:
-                    resultForm.Tb_General3 = resultForm.SelectedPage;
-                    break;
-                default:
-                    break;
-            }
             resultForm.SelectedPage.Show();
             resultForm.Show();
         }
@@ -502,8 +534,7 @@ namespace PixelDrawer
 
                     int displayPageNum = 0;
                     int.TryParse(tb_BH.Text, out displayPageNum);
-                    resultForm.SelectedPage = boxes[videoPageNum];
-
+                    
                     switch (displayPageNum)
                     {
                         case 0:
@@ -523,24 +554,7 @@ namespace PixelDrawer
                             return;
                     }
 
-                    switch (videoPageNum)
-                    {
-                        case 0:
-                            resultForm.Tb_General = resultForm.SelectedPage;
-                            break;
-                        case 1:
-                            resultForm.Tb_General1 = resultForm.SelectedPage;
-                            break;
-                        case 2:
-                            resultForm.Tb_General2 = resultForm.SelectedPage;
-                            break;
-                        case 3:
-                            resultForm.Tb_General3 = resultForm.SelectedPage;
-                            break;
-                        default:
-                            break;
-                    }
-
+                    resultForm.SelectedPage = boxes[videoPageNum];
                     resultForm.SelectedPage.Show();
                 }
                 else

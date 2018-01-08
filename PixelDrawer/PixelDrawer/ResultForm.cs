@@ -39,7 +39,6 @@ namespace PixelDrawer
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
-            this.BackColor = Color.Black;
             this.Paint += this.OnPaint;
             this.KeyDown += ResultForm_KeyDown;
             this.KeyPreview = true;
