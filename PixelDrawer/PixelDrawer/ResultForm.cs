@@ -26,6 +26,11 @@ namespace PixelDrawer
         private Color color = Color.Black;
         private List<Point> points;
         private Dictionary<Point, Color> colorsDictionary;
+        private Dictionary<Point, string> colorsHexDictionary;
+        private Dictionary<string, string> videoPage1Values;
+        private Dictionary<string, string> videoPage2Values;
+        private Dictionary<string, string> videoPage3Values;
+        private Dictionary<string, string> videoPage4Values;
         private bool isTextMode;
         private int pointsDone;
         private RichTextBox selectedPage;
@@ -36,6 +41,11 @@ namespace PixelDrawer
         {
             Points = new List<Point>();
             ColorsDictionary = new Dictionary<Point, Color>();
+            videoPage1Values = new Dictionary<string, string>();
+            VideoPage2Values = new Dictionary<string, string>();
+            VideoPage3Values = new Dictionary<string, string>();
+            VideoPage4Values = new Dictionary<string, string>();
+            ColorsHexDictionary = new Dictionary<Point, string>();
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
@@ -60,7 +70,8 @@ namespace PixelDrawer
         public float RatioY { get => ratioY; set => ratioY = value; }
         public Color Color { get => color; set =>  color = value; }
         public List<Point> Points { get => points; set => points = value; }
-        public Dictionary<Point,Color> ColorsDictionary { get => colorsDictionary; set => colorsDictionary = value; }
+        public Dictionary<Point, Color> ColorsDictionary { get => colorsDictionary; set => colorsDictionary = value; }
+        public Dictionary<Point, string> ColorsHexDictionary { get => colorsHexDictionary; set => colorsHexDictionary = value; }
         public bool IsTextMode { get => isTextMode; set => isTextMode = value; }
         public RichTextBox Tb_General { get => tb_General; set => tb_General = value; }
         public RichTextBox Tb_General1 { get => tb_General1; set => tb_General1 = value; }
@@ -79,6 +90,10 @@ namespace PixelDrawer
         }
         public bool EscPressed { get; set; }
         public RichTextBox SelectedPage { get => selectedPage; set => selectedPage = value; }
+        public Dictionary<string, string> VideoPage1Values { get => videoPage1Values; set => videoPage1Values = value; }
+        public Dictionary<string, string> VideoPage2Values { get => videoPage2Values; set => videoPage2Values = value; }
+        public Dictionary<string, string> VideoPage3Values { get => videoPage3Values; set => videoPage3Values = value; }
+        public Dictionary<string, string> VideoPage4Values { get => videoPage4Values; set => videoPage4Values = value; }
         #endregion
 
         #region EventHandlers

@@ -73,6 +73,7 @@ namespace PixelDrawer
                 case 7:
                     break;
                 case 8:
+                    ReadStyledText();
                     break;
                 case 9:
                     InsertStyledText();
@@ -104,7 +105,6 @@ namespace PixelDrawer
             radioButton8.Enabled = isActive;
             radioButton9.Enabled = isActive;
             radioButton10.Enabled = isActive;
-            radioButton11.Enabled = isActive;
             radioButton12.Enabled = !isActive;
             radioButton13.Enabled = !isActive;
         }
@@ -209,6 +209,10 @@ namespace PixelDrawer
                         resultForm.Tb_General3.ForeColor = Color.White;
                         resultForm.Tb_General3.BackColor = Color.Black;
                     }
+                }
+                else
+                {
+                    resultForm.BackColor = Color.Black;
                 }
             }
             catch
@@ -368,6 +372,24 @@ namespace PixelDrawer
 
                     space = new string(' ', cursorCol);
                     selectionStart = cursorRow + cursorCol;
+
+                    if(tb_AL.Text.Length < 2)
+                    {
+                        tb_AL.Text = "0" + tb_AL.Text;
+                    }
+                    resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
+
+                    if (tb_CH.Text.Length < 2)
+                    {
+                        tb_CH.Text = "0" + tb_CH.Text;
+                    }
+                    resultForm.VideoPage1Values.Add("CH", tb_CH.Text);
+
+                    if (tb_CL.Text.Length < 2)
+                    {
+                        tb_CL.Text = "0" + tb_CL.Text;
+                    }
+                    resultForm.VideoPage1Values.Add("CL", tb_CL.Text);
                     break;
                 case 1:
                     text = new StringBuilder();
@@ -377,6 +399,23 @@ namespace PixelDrawer
                     }
                     selectionStart = cursorRow1 + cursorCol1;
                     space = new string(' ', cursorCol1);
+                    if (tb_AL.Text.Length < 2)
+                    {
+                        tb_AL.Text = "0" + tb_AL.Text;
+                    }
+                    resultForm.VideoPage2Values.Add("AL", tb_AL.Text);
+
+                    if (tb_CH.Text.Length < 2)
+                    {
+                        tb_CH.Text = "0" + tb_CH.Text;
+                    }
+                    resultForm.VideoPage2Values.Add("CH", tb_CH.Text);
+
+                    if (tb_CL.Text.Length < 2)
+                    {
+                        tb_CL.Text = "0" + tb_CL.Text;
+                    }
+                    resultForm.VideoPage2Values.Add("CL", tb_CL.Text);
 
                     break;
                 case 2:
@@ -388,6 +427,23 @@ namespace PixelDrawer
                     selectionStart = cursorRow2 + cursorCol2;
                     space = new string(' ', cursorCol2);
 
+                    if (tb_AL.Text.Length < 2)
+                    {
+                        tb_AL.Text = "0" + tb_AL.Text;
+                    }
+                    resultForm.VideoPage3Values.Add("AL", tb_AL.Text);
+
+                    if (tb_CH.Text.Length < 2)
+                    {
+                        tb_CH.Text = "0" + tb_CH.Text;
+                    }
+                    resultForm.VideoPage3Values.Add("CH", tb_CH.Text);
+
+                    if (tb_CL.Text.Length < 2)
+                    {
+                        tb_CL.Text = "0" + tb_CL.Text;
+                    }
+                    resultForm.VideoPage3Values.Add("CL", tb_CL.Text);
                     break;
                 case 3:
                     text = new StringBuilder();
@@ -397,7 +453,23 @@ namespace PixelDrawer
                     }
                     selectionStart = cursorRow3 + cursorCol3;
                     space = new string(' ', cursorCol3);
+                    if (tb_AL.Text.Length < 2)
+                    {
+                        tb_AL.Text = "0" + tb_AL.Text;
+                    }
+                    resultForm.VideoPage4Values.Add("AL", tb_AL.Text);
 
+                    if (tb_CH.Text.Length < 2)
+                    {
+                        tb_CH.Text = "0" + tb_CH.Text;
+                    }
+                    resultForm.VideoPage4Values.Add("CH", tb_CH.Text);
+
+                    if (tb_CL.Text.Length < 2)
+                    {
+                        tb_CL.Text = "0" + tb_CL.Text;
+                    }
+                    resultForm.VideoPage4Values.Add("CL", tb_CL.Text);
                     break;
                 default:
                     break;
@@ -459,6 +531,54 @@ namespace PixelDrawer
             {
                 await Task.Delay(500);
                 resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
+            }
+        }
+
+        private void ReadStyledText()
+        {
+            int displayPage = HexToDecimal(tb_BH.Text);
+            string tempValue = string.Empty;
+            switch (displayPage)
+            {
+                case 0:
+                    resultForm.VideoPage1Values.TryGetValue("AL", out tempValue);
+                    tb_AL.Text = tempValue;
+                    resultForm.VideoPage1Values.TryGetValue("CH", out tempValue);
+                    tb_CH.Text = tempValue;
+                    resultForm.VideoPage1Values.TryGetValue("CL", out tempValue);
+                    tb_CL.Text = tempValue;
+
+                    break;
+                case 1:
+                    resultForm.VideoPage2Values.TryGetValue("AL", out tempValue);
+                    tb_AL.Text = tempValue;
+                    resultForm.VideoPage2Values.TryGetValue("CH", out tempValue);
+                    tb_CH.Text = tempValue;
+                    resultForm.VideoPage2Values.TryGetValue("CL", out tempValue);
+                    tb_CL.Text = tempValue;
+
+                    break;
+                case 2:
+                    resultForm.VideoPage3Values.TryGetValue("AL", out tempValue);
+                    tb_AL.Text = tempValue;
+                    resultForm.VideoPage3Values.TryGetValue("CH", out tempValue);
+                    tb_CH.Text = tempValue;
+                    resultForm.VideoPage3Values.TryGetValue("CL", out tempValue);
+                    tb_CL.Text = tempValue;
+
+                    break;
+                case 3:
+                    resultForm.VideoPage4Values.TryGetValue("AL", out tempValue);
+                    tb_AL.Text = tempValue;
+                    resultForm.VideoPage4Values.TryGetValue("CH", out tempValue);
+                    tb_CH.Text = tempValue;
+                    resultForm.VideoPage4Values.TryGetValue("CL", out tempValue);
+                    tb_CL.Text = tempValue;
+
+                    break;
+                default:
+                    MessageBox.Show("Невалидна видеостраница! Изберете от 0 до 3.");
+                    break;
             }
         }
 
@@ -608,6 +728,7 @@ namespace PixelDrawer
             {
                 resultForm.Points.Add(new Point(columns, rows));
                 resultForm.ColorsDictionary.Add(new Point(columns, rows), pixelColor);
+                resultForm.ColorsHexDictionary.Add(new Point(columns, rows), tb_AL.Text);
             }
             else
             {
@@ -629,11 +750,14 @@ namespace PixelDrawer
             int rows = HexToDecimal(tb_DL.Text);
             Point point = new Point(columns, rows);
             Color color = new Color();
+            string colorInHex = string.Empty;
 
             if (resultForm.Points.Contains(point))
             {
-                resultForm.ColorsDictionary.TryGetValue(point, out color);
-                MessageBox.Show(string.Format(@"Пиксел на позиция X:{0} Y:{1} е с цвят: [{2},{3},{4}]", point.X.ToString(), point.Y.ToString(), color.R, color.G, color.B));
+                //resultForm.ColorsDictionary.TryGetValue(point, out color);
+                resultForm.ColorsHexDictionary.TryGetValue(point, out colorInHex);
+                tb_AL.Text = colorInHex;
+                //MessageBox.Show(string.Format(@"Пиксел на позиция X:{0} Y:{1} е с цвят: [{2},{3},{4}]", point.X.ToString(), point.Y.ToString(), color.R, color.G, color.B));
             }
             else
             {
@@ -1067,7 +1191,7 @@ namespace PixelDrawer
 
             lbl_Help.Text = string.Format("08H." +
                 Environment.NewLine +
-                "В текстов режим кода на символа се получава в AL, а байта с атрибути в AH. В BH се задава номера на видеостраницата.");
+                "В текстов режим кода на символа се получава в AL, а байта с атрибути в CX. В BH се задава номера на видеостраницата.");
         }
 
         //Запис на символ и атрибут
