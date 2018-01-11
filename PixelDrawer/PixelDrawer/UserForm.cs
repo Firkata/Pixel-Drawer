@@ -58,6 +58,7 @@ namespace PixelDrawer
                     SelectedMode(tb_AL.Text);
                     break;
                 case 2:
+                    //Курсор
                     break;
                 case 3:
                     PositionCursor();
@@ -69,6 +70,7 @@ namespace PixelDrawer
                     SelectedPage();
                     break;
                 case 6:
+                    MoveUp();
                     break;
                 case 7:
                     break;
@@ -79,6 +81,7 @@ namespace PixelDrawer
                     InsertStyledText();
                     break;
                 case 10:
+                    //Запис на символ
                     break;
                 case 11:
                     ChangeScreenColor(tb_BL.Text);
@@ -96,15 +99,11 @@ namespace PixelDrawer
 
         public void ToggleTextButtons(bool isActive)
         {
-            radioButton2.Enabled = isActive;
             radioButton3.Enabled = isActive;
             radioButton4.Enabled = isActive;
             radioButton5.Enabled = isActive;
-            radioButton6.Enabled = isActive;
-            radioButton7.Enabled = isActive;
             radioButton8.Enabled = isActive;
             radioButton9.Enabled = isActive;
-            radioButton10.Enabled = isActive;
             radioButton12.Enabled = !isActive;
             radioButton13.Enabled = !isActive;
         }
@@ -217,7 +216,8 @@ namespace PixelDrawer
             }
             catch
             {
-                MessageBox.Show("Невалидни данни");
+                MessageBox.Show("Невалидна режим! Изберете от опциите в описанието.");
+                tb_AL.Text = "00";
             }
         }
 
@@ -235,33 +235,26 @@ namespace PixelDrawer
                 }
             }
 
-            if(!Regex.IsMatch(tb_DH.Text, @"^\d+$") || !Regex.IsMatch(tb_DL.Text, @"^\d+$"))
-            {
-                MessageBox.Show("Въведете правилни колона и ред");
-                tb_DH.Text = "00";
-                tb_DL.Text = "00";
-                return;
-            }
             switch (videoPageNum)
             {
                 case 0:
-                    cursorRow = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow = HexToDecimal(tb_DH.Text);
+                    cursorCol = HexToDecimal(tb_DL.Text);
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow, cursorCol));
                     break;
                 case 1:
-                    cursorRow1 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol1 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow1 = HexToDecimal(tb_DH.Text);
+                    cursorCol1 = HexToDecimal(tb_DL.Text);
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow1, cursorCol1));
                     break;
                 case 2:
-                    cursorRow2 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol2 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow2 = HexToDecimal(tb_DH.Text);
+                    cursorCol2 = HexToDecimal(tb_DL.Text);
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow2, cursorCol2));
                     break;
                 case 3:
-                    cursorRow3 = Regex.IsMatch(tb_DH.Text, @"^\d+$") ? int.Parse(tb_DH.Text) : 0;
-                    cursorCol3 = Regex.IsMatch(tb_DL.Text, @"^\d+$") ? int.Parse(tb_DL.Text) : 0;
+                    cursorRow3 = HexToDecimal(tb_DH.Text);
+                    cursorCol3 = HexToDecimal(tb_DL.Text);
                     MessageBox.Show(string.Format(@"Видеостраница: {0}{1}Курсора е на ред: {2} колона: {3}", videoPageNum, Environment.NewLine, cursorRow3, cursorCol3));
                     break;
                 default:
@@ -327,6 +320,21 @@ namespace PixelDrawer
             }
         }
 
+        //Преместване нагоре
+        private void MoveUp()
+        {
+            int moveUpnum = HexToDecimal(tb_AL.Text);
+            RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
+
+            for (int i = 0; i < boxes[videoPageNum].Lines.Length; i++)
+            {
+                boxes[videoPageNum].SelectionStart = 3;
+                boxes[videoPageNum].SelectionLength = 3;
+            }
+
+            resultForm.Show();
+        }
+
         //Запис на символ и атрибут
         private void InsertStyledText()
         {
@@ -360,6 +368,8 @@ namespace PixelDrawer
             var text = new StringBuilder();
             string space = string.Empty;
             int selectionStart = 0;
+            string dictValue = string.Empty;
+
 
             switch (displayPage)
             {
@@ -377,18 +387,35 @@ namespace PixelDrawer
                     {
                         tb_AL.Text = "0" + tb_AL.Text;
                     }
-                    resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
 
+                    if (resultForm.VideoPage1Values.TryGetValue("AL", out dictValue))
+                    {
+                        resultForm.VideoPage1Values.Remove("AL");
+                    }
+                    resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
+                    
                     if (tb_CH.Text.Length < 2)
                     {
                         tb_CH.Text = "0" + tb_CH.Text;
                     }
+
+                    if (resultForm.VideoPage1Values.TryGetValue("CH", out dictValue))
+                    {
+                        resultForm.VideoPage1Values.Remove("CH");
+                    }
                     resultForm.VideoPage1Values.Add("CH", tb_CH.Text);
+
 
                     if (tb_CL.Text.Length < 2)
                     {
                         tb_CL.Text = "0" + tb_CL.Text;
                     }
+
+                    if (resultForm.VideoPage1Values.TryGetValue("CL", out dictValue))
+                    {
+                        resultForm.VideoPage1Values.Remove("CL");
+                    }
+
                     resultForm.VideoPage1Values.Add("CL", tb_CL.Text);
                     break;
                 case 1:
@@ -403,18 +430,36 @@ namespace PixelDrawer
                     {
                         tb_AL.Text = "0" + tb_AL.Text;
                     }
+
+                    if (resultForm.VideoPage2Values.TryGetValue("AL", out dictValue))
+                    {
+                        resultForm.VideoPage2Values.Remove("AL");
+                    }
+
                     resultForm.VideoPage2Values.Add("AL", tb_AL.Text);
 
                     if (tb_CH.Text.Length < 2)
                     {
                         tb_CH.Text = "0" + tb_CH.Text;
                     }
+
+                    if (resultForm.VideoPage2Values.TryGetValue("CH", out dictValue))
+                    {
+                        resultForm.VideoPage2Values.Remove("CH");
+                    }
+
                     resultForm.VideoPage2Values.Add("CH", tb_CH.Text);
 
                     if (tb_CL.Text.Length < 2)
                     {
                         tb_CL.Text = "0" + tb_CL.Text;
                     }
+
+                    if (resultForm.VideoPage2Values.TryGetValue("CL", out dictValue))
+                    {
+                        resultForm.VideoPage2Values.Remove("CL");
+                    }
+
                     resultForm.VideoPage2Values.Add("CL", tb_CL.Text);
 
                     break;
@@ -431,18 +476,36 @@ namespace PixelDrawer
                     {
                         tb_AL.Text = "0" + tb_AL.Text;
                     }
+
+                    if (resultForm.VideoPage3Values.TryGetValue("AL", out dictValue))
+                    {
+                        resultForm.VideoPage3Values.Remove("AL");
+                    }
+
                     resultForm.VideoPage3Values.Add("AL", tb_AL.Text);
 
                     if (tb_CH.Text.Length < 2)
                     {
                         tb_CH.Text = "0" + tb_CH.Text;
                     }
+
+                    if (resultForm.VideoPage3Values.TryGetValue("CH", out dictValue))
+                    {
+                        resultForm.VideoPage3Values.Remove("CH");
+                    }
+
                     resultForm.VideoPage3Values.Add("CH", tb_CH.Text);
 
                     if (tb_CL.Text.Length < 2)
                     {
                         tb_CL.Text = "0" + tb_CL.Text;
                     }
+
+                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
+                    {
+                        resultForm.VideoPage4Values.Remove("CL");
+                    }
+
                     resultForm.VideoPage3Values.Add("CL", tb_CL.Text);
                     break;
                 case 3:
@@ -457,18 +520,36 @@ namespace PixelDrawer
                     {
                         tb_AL.Text = "0" + tb_AL.Text;
                     }
+
+                    if (resultForm.VideoPage4Values.TryGetValue("AL", out dictValue))
+                    {
+                        resultForm.VideoPage4Values.Remove("AL");
+                    }
+
                     resultForm.VideoPage4Values.Add("AL", tb_AL.Text);
 
                     if (tb_CH.Text.Length < 2)
                     {
                         tb_CH.Text = "0" + tb_CH.Text;
                     }
+
+                    if (resultForm.VideoPage4Values.TryGetValue("CH", out dictValue))
+                    {
+                        resultForm.VideoPage4Values.Remove("CH");
+                    }
+
                     resultForm.VideoPage4Values.Add("CH", tb_CH.Text);
 
                     if (tb_CL.Text.Length < 2)
                     {
                         tb_CL.Text = "0" + tb_CL.Text;
                     }
+
+                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
+                    {
+                        resultForm.VideoPage4Values.Remove("CL");
+                    }
+
                     resultForm.VideoPage4Values.Add("CL", tb_CL.Text);
                     break;
                 default:
@@ -789,7 +870,7 @@ namespace PixelDrawer
             }
             catch
             {
-                MessageBox.Show("Невалидни данни");
+                MessageBox.Show("Стойността не е валидно HEX число.");
             }
 
             return 0;
@@ -882,51 +963,51 @@ namespace PixelDrawer
         }
 
         //Курсор
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            buttonCheckedIndex = 2;
-            tb_AH.Text = "01";
-            tb_AH.ReadOnly = true;
-            tb_AH.BackColor = Color.LightGray;
+        //private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    buttonCheckedIndex = 2;
+        //    tb_AH.Text = "01";
+        //    tb_AH.ReadOnly = true;
+        //    tb_AH.BackColor = Color.LightGray;
 
-            tb_AL.Text = string.Empty;
-            tb_AL.ReadOnly = true;
-            tb_AL.BackColor = Color.LightSlateGray;
+        //    tb_AL.Text = string.Empty;
+        //    tb_AL.ReadOnly = true;
+        //    tb_AL.BackColor = Color.LightSlateGray;
 
-            tb_BH.Text = string.Empty;
-            tb_BH.ReadOnly = true;
-            tb_BH.BackColor = Color.LightSlateGray;
+        //    tb_BH.Text = string.Empty;
+        //    tb_BH.ReadOnly = true;
+        //    tb_BH.BackColor = Color.LightSlateGray;
 
-            tb_BL.Text = string.Empty;
-            tb_BL.ReadOnly = true;
-            tb_BL.BackColor = Color.LightSlateGray;
+        //    tb_BL.Text = string.Empty;
+        //    tb_BL.ReadOnly = true;
+        //    tb_BL.BackColor = Color.LightSlateGray;
 
-            tb_CH.Text = "00";
-            tb_CH.ReadOnly = false;
-            tb_CH.BackColor = Color.White;
+        //    tb_CH.Text = "00";
+        //    tb_CH.ReadOnly = false;
+        //    tb_CH.BackColor = Color.White;
 
-            tb_CL.Text = "00";
-            tb_CL.ReadOnly = false;
-            tb_CL.BackColor = Color.White;
+        //    tb_CL.Text = "00";
+        //    tb_CL.ReadOnly = false;
+        //    tb_CL.BackColor = Color.White;
 
-            tb_DH.Text = string.Empty;
-            tb_DH.ReadOnly = true;
-            tb_DH.BackColor = Color.LightSlateGray;
+        //    tb_DH.Text = string.Empty;
+        //    tb_DH.ReadOnly = true;
+        //    tb_DH.BackColor = Color.LightSlateGray;
 
-            tb_DL.Text = string.Empty;
-            tb_DL.ReadOnly = true;
-            tb_DL.BackColor = Color.LightSlateGray;
+        //    tb_DL.Text = string.Empty;
+        //    tb_DL.ReadOnly = true;
+        //    tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("01H." +
-                Environment.NewLine +
-                "Задава вида на курсора в текстовите режими." +
-                Environment.NewLine +
-                "Редовете са с номерирани отгоре надолу от 0 до 7 за цветен графичен адаптер и от 0 до 13 за монохроматичен адаптер." +
-                Environment.NewLine +
-                "Курсора се задава чрез начален (CH) и краен (CL) ред." +
-                Environment.NewLine +
-                "Ако  бит 5 на CH е 1 се получава невидим курсор.");
-        }
+        //    lbl_Help.Text = string.Format("01H." +
+        //        Environment.NewLine +
+        //        "Задава вида на курсора в текстовите режими." +
+        //        Environment.NewLine +
+        //        "Редовете са с номерирани отгоре надолу от 0 до 7 за цветен графичен адаптер и от 0 до 13 за монохроматичен адаптер." +
+        //        Environment.NewLine +
+        //        "Курсора се задава чрез начален (CH) и краен (CL) ред." +
+        //        Environment.NewLine +
+        //        "Ако  бит 5 на CH е 1 се получава невидим курсор.");
+        //}
 
         //Позициониране на курсора
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
@@ -956,17 +1037,15 @@ namespace PixelDrawer
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
-            tb_DH.Text = cursorRow.ToString();
+            tb_DH.Text = "00";
             tb_DH.ReadOnly = false;
             tb_DH.BackColor = Color.White;
 
-            tb_DL.Text = cursorCol.ToString();
+            tb_DL.Text = "00";
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
-            lbl_Help.Text = string.Format("02H." +
-                Environment.NewLine +
-                "Новата позиция се задава във формат ред (DH) и колона (DL) за видеостраницата (BH).");
+            lbl_Help.Text = string.Format("Новата позиция се задава във формат ред (DH) и колона (DL) за видеостраницата (BH).");
         }
 
         //Информация за курсора
@@ -1005,8 +1084,7 @@ namespace PixelDrawer
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("03H." +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "В BH се задава номера на видеостраницата." +
                 "В DH и DL се получава реда и колоната на курсора за указаната страница." +
                 "В CH и CL се получава информация за вида на курсора.");
@@ -1016,7 +1094,7 @@ namespace PixelDrawer
         private void radioButton5_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 5;
-            tb_AH.Text = "05";
+            tb_AH.Text = "04";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
@@ -1048,15 +1126,153 @@ namespace PixelDrawer
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("05H." +
-                Environment.NewLine +
-                "Има смисъл само за текстов режим.Номера на видеостраницата се задава в AL. В 40-колонните режими се задава стойност от 0 до 7, а в 80-колонните от 0 до 3");
+            lbl_Help.Text = string.Format("Има смисъл само за текстов режим.Номера на видеостраницата се задава в AL. В 40-колонните режими се задава стойност от 0 до 7, а в 80-колонните от 0 до 3");
         }
 
         //Преместване нагоре
-        private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        //private void radioButton6_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    buttonCheckedIndex = 6;
+        //    tb_AH.Text = "06";
+        //    tb_AH.ReadOnly = true;
+        //    tb_AH.BackColor = Color.LightGray;
+
+        //    tb_AL.Text = "00";
+        //    tb_AL.ReadOnly = false;
+        //    tb_AL.BackColor = Color.White;
+
+        //    tb_BH.Text = "00";
+        //    tb_BH.ReadOnly = false;
+        //    tb_BH.BackColor = Color.White;
+
+        //    tb_BL.Text = string.Empty;
+        //    tb_BL.ReadOnly = true;
+        //    tb_BL.BackColor = Color.LightSlateGray;
+
+        //    tb_CH.Text = "00";
+        //    tb_CH.ReadOnly = false;
+        //    tb_CH.BackColor = Color.White;
+
+        //    tb_CL.Text = "00";
+        //    tb_CL.ReadOnly = false;
+        //    tb_CL.BackColor = Color.White;
+
+        //    tb_DH.Text = "00";
+        //    tb_DH.ReadOnly = false;
+        //    tb_DH.BackColor = Color.White;
+
+        //    tb_DL.Text = "00";
+        //    tb_DL.ReadOnly = false;
+        //    tb_DL.BackColor = Color.White;
+
+        //    lbl_Help.Text = string.Format("06H." +
+        //        Environment.NewLine +
+        //        "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта нагоре указан брой редове." +
+        //        Environment.NewLine +
+        //        "AL - брой редове за превъртане" +
+        //        Environment.NewLine +
+        //        "BH - начин за запълване (атрибути и цвят)" +
+        //        Environment.NewLine +
+        //        "CH, CL - ред и колона на горния ляв ъгъл" +
+        //        Environment.NewLine +
+        //        "DH, DL - ред и колона на долния ляв ъгъл"
+        //        );
+        //}
+
+        //Преместване надолу
+        //private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    buttonCheckedIndex = 7;
+        //    tb_AH.Text = "07";
+        //    tb_AH.ReadOnly = true;
+        //    tb_AH.BackColor = Color.LightGray;
+
+        //    tb_AL.Text = "00";
+        //    tb_AL.ReadOnly = false;
+        //    tb_AL.BackColor = Color.White;
+
+        //    tb_BH.Text = "00";
+        //    tb_BH.ReadOnly = false;
+        //    tb_BH.BackColor = Color.White;
+
+        //    tb_BL.Text = string.Empty;
+        //    tb_BL.ReadOnly = true;
+        //    tb_BL.BackColor = Color.LightSlateGray;
+
+        //    tb_CH.Text = "00";
+        //    tb_CH.ReadOnly = false;
+        //    tb_CH.BackColor = Color.White;
+
+        //    tb_CL.Text = "00";
+        //    tb_CL.ReadOnly = false;
+        //    tb_CL.BackColor = Color.White;
+
+        //    tb_DH.Text = "00";
+        //    tb_DH.ReadOnly = false;
+        //    tb_DH.BackColor = Color.White;
+
+        //    tb_DL.Text = "00";
+        //    tb_DL.ReadOnly = false;
+        //    tb_DL.BackColor = Color.White;
+
+        //    lbl_Help.Text = string.Format("06H." +
+        //        Environment.NewLine +
+        //        "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта надолу указан брой редове." +
+        //        Environment.NewLine +
+        //        "AL - брой редове за превъртане" +
+        //        Environment.NewLine +
+        //        "BH - начин за запълване (атрибути и цвят)" +
+        //        Environment.NewLine +
+        //        "CH, CL - ред и колона на горния ляв ъгъл" +
+        //        Environment.NewLine +
+        //        "DH, DL - ред и колона на долния ляв ъгъл"
+        //        );
+        //}
+
+        //Четене на символ и атрибут
+
+        private void radioButton8_CheckedChanged(object sender, EventArgs e)
         {
-            buttonCheckedIndex = 6;
+            buttonCheckedIndex = 8;
+            tb_AH.Text = "05";
+            tb_AH.ReadOnly = true;
+            tb_AH.BackColor = Color.LightGray;
+
+            tb_AL.Text = string.Empty;
+            tb_AL.ReadOnly = true;
+            tb_AL.BackColor = Color.LightSlateGray;
+
+            tb_BH.Text = "00";
+            tb_BH.ReadOnly = false;
+            tb_BH.BackColor = Color.White;
+
+            tb_BL.Text = string.Empty;
+            tb_BL.ReadOnly = true;
+            tb_BL.BackColor = Color.LightSlateGray;
+
+            tb_CH.Text = string.Empty;
+            tb_CH.ReadOnly = true;
+            tb_CH.BackColor = Color.LightSlateGray;
+
+            tb_CL.Text = string.Empty;
+            tb_CL.ReadOnly = true;
+            tb_CL.BackColor = Color.LightSlateGray;
+
+            tb_DH.Text = string.Empty;
+            tb_DH.ReadOnly = true;
+            tb_DH.BackColor = Color.LightSlateGray;
+
+            tb_DL.Text = string.Empty;
+            tb_DL.ReadOnly = true;
+            tb_DL.BackColor = Color.LightSlateGray;
+
+            lbl_Help.Text = string.Format("В текстов режим кода на символа се получава в AL, а байта с атрибути в CX. В BH се задава номера на видеостраницата.");
+        }
+
+        //Запис на символ и атрибут
+        private void radioButton9_CheckedChanged(object sender, EventArgs e)
+        {
+            buttonCheckedIndex = 9;
             tb_AH.Text = "06";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
@@ -1069,147 +1285,6 @@ namespace PixelDrawer
             tb_BH.ReadOnly = false;
             tb_BH.BackColor = Color.White;
 
-            tb_BL.Text = string.Empty;
-            tb_BL.ReadOnly = true;
-            tb_BL.BackColor = Color.LightSlateGray;
-
-            tb_CH.Text = "00";
-            tb_CH.ReadOnly = false;
-            tb_CH.BackColor = Color.White;
-
-            tb_CL.Text = "00";
-            tb_CL.ReadOnly = false;
-            tb_CL.BackColor = Color.White;
-
-            tb_DH.Text = "00";
-            tb_DH.ReadOnly = false;
-            tb_DH.BackColor = Color.White;
-
-            tb_DL.Text = "00";
-            tb_DL.ReadOnly = false;
-            tb_DL.BackColor = Color.White;
-
-            lbl_Help.Text = string.Format("06H." +
-                Environment.NewLine +
-                "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта нагоре указан брой редове." +
-                Environment.NewLine +
-                "AL - брой редове за превъртане" +
-                Environment.NewLine +
-                "BH - начин за запълване (атрибути и цвят)" +
-                Environment.NewLine +
-                "CH, CL - ред и колона на горния ляв ъгъл" +
-                Environment.NewLine +
-                "DH, DL - ред и колона на долния ляв ъгъл"
-                );
-        }
-
-        //Преместване надолу
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
-        {
-            buttonCheckedIndex = 7;
-            tb_AH.Text = "07";
-            tb_AH.ReadOnly = true;
-            tb_AH.BackColor = Color.LightGray;
-
-            tb_AL.Text = "00";
-            tb_AL.ReadOnly = false;
-            tb_AL.BackColor = Color.White;
-
-            tb_BH.Text = "00";
-            tb_BH.ReadOnly = false;
-            tb_BH.BackColor = Color.White;
-
-            tb_BL.Text = string.Empty;
-            tb_BL.ReadOnly = true;
-            tb_BL.BackColor = Color.LightSlateGray;
-
-            tb_CH.Text = "00";
-            tb_CH.ReadOnly = false;
-            tb_CH.BackColor = Color.White;
-
-            tb_CL.Text = "00";
-            tb_CL.ReadOnly = false;
-            tb_CL.BackColor = Color.White;
-
-            tb_DH.Text = "00";
-            tb_DH.ReadOnly = false;
-            tb_DH.BackColor = Color.White;
-
-            tb_DL.Text = "00";
-            tb_DL.ReadOnly = false;
-            tb_DL.BackColor = Color.White;
-
-            lbl_Help.Text = string.Format("06H." +
-                Environment.NewLine +
-                "Чрез функцията се определя правоъгърнлата област от активната видеостраница и нейното съдържание се превърта надолу указан брой редове." +
-                Environment.NewLine +
-                "AL - брой редове за превъртане" +
-                Environment.NewLine +
-                "BH - начин за запълване (атрибути и цвят)" +
-                Environment.NewLine +
-                "CH, CL - ред и колона на горния ляв ъгъл" +
-                Environment.NewLine +
-                "DH, DL - ред и колона на долния ляв ъгъл"
-                );
-        }
-
-        //Четене на символ и атрибут
-        private void radioButton8_CheckedChanged(object sender, EventArgs e)
-        {
-            buttonCheckedIndex = 8;
-            tb_AH.Text = "08";
-            tb_AH.ReadOnly = true;
-            tb_AH.BackColor = Color.LightGray;
-
-            tb_AL.Text = string.Empty;
-            tb_AL.ReadOnly = true;
-            tb_AL.BackColor = Color.LightSlateGray;
-
-            tb_BH.Text = "00";
-            tb_BH.ReadOnly = false;
-            tb_BH.BackColor = Color.White;
-
-            tb_BL.Text = string.Empty;
-            tb_BL.ReadOnly = true;
-            tb_BL.BackColor = Color.LightSlateGray;
-
-            tb_CH.Text = string.Empty;
-            tb_CH.ReadOnly = true;
-            tb_CH.BackColor = Color.LightSlateGray;
-
-            tb_CL.Text = string.Empty;
-            tb_CL.ReadOnly = true;
-            tb_CL.BackColor = Color.LightSlateGray;
-
-            tb_DH.Text = string.Empty;
-            tb_DH.ReadOnly = true;
-            tb_DH.BackColor = Color.LightSlateGray;
-
-            tb_DL.Text = string.Empty;
-            tb_DL.ReadOnly = true;
-            tb_DL.BackColor = Color.LightSlateGray;
-
-            lbl_Help.Text = string.Format("08H." +
-                Environment.NewLine +
-                "В текстов режим кода на символа се получава в AL, а байта с атрибути в CX. В BH се задава номера на видеостраницата.");
-        }
-
-        //Запис на символ и атрибут
-        private void radioButton9_CheckedChanged(object sender, EventArgs e)
-        {
-            buttonCheckedIndex = 9;
-            tb_AH.Text = "09";
-            tb_AH.ReadOnly = true;
-            tb_AH.BackColor = Color.LightGray;
-
-            tb_AL.Text = "45";
-            tb_AL.ReadOnly = false;
-            tb_AL.BackColor = Color.White;
-
-            tb_BH.Text = "00";
-            tb_BH.ReadOnly = false;
-            tb_BH.BackColor = Color.White;
-
             tb_BL.Text = "00";
             tb_BL.ReadOnly = false;
             tb_BL.BackColor = Color.White;
@@ -1218,7 +1293,7 @@ namespace PixelDrawer
             tb_CH.ReadOnly = false;
             tb_CH.BackColor = Color.White;
 
-            tb_CL.Text = "09";
+            tb_CL.Text = "00";
             tb_CL.ReadOnly = false;
             tb_CL.BackColor = Color.White;
 
@@ -1230,59 +1305,59 @@ namespace PixelDrawer
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("09H." +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "Кода на символа се задава в AL. Символа се извежда толкова пъти, колкото е указано в СХ." +
                 " В ВН се задава номера на видеостраницата. Атрибутите за цвят се задават в BL.");
         }
 
         //Запис на символ
-        private void radioButton10_CheckedChanged(object sender, EventArgs e)
-        {
-            buttonCheckedIndex = 10;
-            tb_AH.Text = "0A";
-            tb_AH.ReadOnly = true;
-            tb_AH.BackColor = Color.LightGray;
+        //private void radioButton10_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    buttonCheckedIndex = 10;
+        //    tb_AH.Text = "0A";
+        //    tb_AH.ReadOnly = true;
+        //    tb_AH.BackColor = Color.LightGray;
 
-            tb_AL.Text = "00";
-            tb_AL.ReadOnly = false;
-            tb_AL.BackColor = Color.White;
+        //    tb_AL.Text = "00";
+        //    tb_AL.ReadOnly = false;
+        //    tb_AL.BackColor = Color.White;
 
-            tb_BH.Text = "00";
-            tb_BH.ReadOnly = false;
-            tb_BH.BackColor = Color.White;
+        //    tb_BH.Text = "00";
+        //    tb_BH.ReadOnly = false;
+        //    tb_BH.BackColor = Color.White;
 
-            tb_BL.Text = "00";
-            tb_BL.ReadOnly = false;
-            tb_BL.BackColor = Color.White;
+        //    tb_BL.Text = "00";
+        //    tb_BL.ReadOnly = false;
+        //    tb_BL.BackColor = Color.White;
 
-            tb_CH.Text = "00";
-            tb_CH.ReadOnly = false;
-            tb_CH.BackColor = Color.White;
+        //    tb_CH.Text = "00";
+        //    tb_CH.ReadOnly = false;
+        //    tb_CH.BackColor = Color.White;
 
-            tb_CL.Text = "00";
-            tb_CL.ReadOnly = false;
-            tb_CL.BackColor = Color.White;
+        //    tb_CL.Text = "00";
+        //    tb_CL.ReadOnly = false;
+        //    tb_CL.BackColor = Color.White;
 
-            tb_DH.Text = string.Empty;
-            tb_DH.ReadOnly = true;
-            tb_DH.BackColor = Color.LightSlateGray;
+        //    tb_DH.Text = string.Empty;
+        //    tb_DH.ReadOnly = true;
+        //    tb_DH.BackColor = Color.LightSlateGray;
 
-            tb_DL.Text = string.Empty;
-            tb_DL.ReadOnly = true;
-            tb_DL.BackColor = Color.LightSlateGray;
+        //    tb_DL.Text = string.Empty;
+        //    tb_DL.ReadOnly = true;
+        //    tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("0АH." +
-                Environment.NewLine +
-                "Отличава се от 09Н по това, че записва само кода на символа без да променя атрибутите" +
-                "за цвят в съответната позиция.");
-        }
+        //    lbl_Help.Text = string.Format("0АH." +
+        //        Environment.NewLine +
+        //        "Отличава се от 09Н по това, че записва само кода на символа без да променя атрибутите" +
+        //        "за цвят в съответната позиция.");
+        //}
 
         //Смяна палитра
+
         private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 11;
-            tb_AH.Text = "0B";
+            tb_AH.Text = "07";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
@@ -1290,9 +1365,9 @@ namespace PixelDrawer
             tb_AL.ReadOnly = true;
             tb_AL.BackColor = Color.LightSlateGray;
 
-            tb_BH.Text = "00";
-            tb_BH.ReadOnly = false;
-            tb_BH.BackColor = Color.White;
+            tb_BH.Text = string.Empty;
+            tb_BH.ReadOnly = true;
+            tb_BH.BackColor = Color.LightSlateGray;
 
             tb_BL.Text = "00";
             tb_BL.ReadOnly = false;
@@ -1314,26 +1389,19 @@ namespace PixelDrawer
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("0BH." +
-                Environment.NewLine +
-                "1. BH=0" +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "В текстов режим BL задава цвета на екрана - от 0 до 15." +
                 Environment.NewLine +
                 "В графичен режим 320х200 BL задава цвета на фона." +
                 Environment.NewLine +
-                "В графичен режим 640х200 BL задава цвета на изображението на целия екран - от 0 до 15." +
-                Environment.NewLine +
-                "2. BH=1" +
-                Environment.NewLine +
-                "В BL се задава номера ( 0 или 1 ) на палитрата, която ще се използва в графичен режим 320х200.");
+                "В графичен режим 640х200 BL задава цвета на изображението на целия екран - от 0 до 15.");
         }
 
         //Запис Точка
         private void radioButton12_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 12;
-            tb_AH.Text = "0C";
+            tb_AH.Text = "08";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
@@ -1365,8 +1433,7 @@ namespace PixelDrawer
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
-            lbl_Help.Text = string.Format("0CH." +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "Важи само за графичен режим." +
                 Environment.NewLine +
                 "Координатите на точката се задават във формат ред и колона:" +
@@ -1375,16 +1442,14 @@ namespace PixelDrawer
                 Environment.NewLine +
                 "CX - номер на колоната" +
                 Environment.NewLine +
-                "AL - цвят на точката" +
-                Environment.NewLine +
-                "Ако бит 7 е 1, с битовете на цвят в AL  и текущите битове в паметта се изпълнява XOR.");
+                "AL - цвят на точката");
         }
 
         //Четене точка
         private void radioButton13_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 13;
-            tb_AH.Text = "0D";
+            tb_AH.Text = "09";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
@@ -1416,8 +1481,7 @@ namespace PixelDrawer
             tb_DL.ReadOnly = false;
             tb_DL.BackColor = Color.White;
 
-            lbl_Help.Text = string.Format("0DH." +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "Координатите се задават в DL - номер на ред, а в CX - номер на колона." +
                 Environment.NewLine +
                 "В AL се получава цвета на точката.");
@@ -1427,7 +1491,7 @@ namespace PixelDrawer
         private void radioButton14_CheckedChanged(object sender, EventArgs e)
         {
             buttonCheckedIndex = 14;
-            tb_AH.Text = "0F";
+            tb_AH.Text = "0А";
             tb_AH.ReadOnly = true;
             tb_AH.BackColor = Color.LightGray;
 
@@ -1459,8 +1523,7 @@ namespace PixelDrawer
             tb_DL.ReadOnly = true;
             tb_DL.BackColor = Color.LightSlateGray;
 
-            lbl_Help.Text = string.Format("0FH." +
-                Environment.NewLine +
+            lbl_Help.Text = string.Format(
                 "Връща следната информация:" +
                 Environment.NewLine +
                 "AL - текущия режим на изображението (от 0 до 7)" +
