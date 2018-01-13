@@ -580,12 +580,12 @@ namespace PixelDrawer
             int red = byteRepr[1] == '1' ? 255 : 0;
             int green = byteRepr[2] == '1' ? 255 : 0;
             int blue = byteRepr[3] == '1' ? 255 : 0;
-            Color textColor = Color.FromArgb(red, green, blue);
-
+            Color textBackColor = Color.FromArgb(red, green, blue);
+            
             red = byteRepr[5] == '1' ? 255 : 0;
             green = byteRepr[6] == '1' ? 255 : 0;
             blue = byteRepr[7] == '1' ? 255 : 0;
-            Color textBackColor = Color.FromArgb(red, green, blue);
+            Color textColor = Color.FromArgb(red, green, blue);
 
             boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length - (boxes[displayPage].Text.Length - space.Length);
             boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
@@ -798,9 +798,9 @@ namespace PixelDrawer
             int remainingBits = 8 - byteRepr.Length;
             byteRepr = new string('0', remainingBits) + byteRepr;
 
-            int red = byteRepr[1] == '1' ? 255 : 0;
-            int green = byteRepr[2] == '1' ? 255 : 0;
-            int blue = byteRepr[3] == '1' ? 255 : 0;
+            int red = byteRepr[5] == '1' ? 255 : 0;
+            int green = byteRepr[6] == '1' ? 255 : 0;
+            int blue = byteRepr[7] == '1' ? 255 : 0;
             Color pixelColor = Color.FromArgb(red, green, blue);
 
             //resultForm.Color = pixelColor;
@@ -1442,7 +1442,9 @@ namespace PixelDrawer
                 Environment.NewLine +
                 "CX - номер на колоната" +
                 Environment.NewLine +
-                "AL - цвят на точката");
+                "AL - цвят на точката") +
+                Environment.NewLine +
+                "От стойността в AL се формира 8-битово двоично число, чиито 3 най-младши бита определят RGB стойностите на цвета на точката.";
         }
 
         //Четене точка
