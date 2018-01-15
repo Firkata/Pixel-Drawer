@@ -176,10 +176,15 @@ namespace PixelDrawer
                 {
                     if (resultForm.Tb_General == null)
                     {
+                        int height = resolution.Height - 15;
+                        int width = resolution.Width - 15;
+
                         resultForm.Tb_General = new RichTextBox();
                         resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General.ReadOnly = true;
-                        resultForm.Tb_General.Dock = DockStyle.Fill;
+                        resultForm.Tb_General.MaximumSize = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General.Size = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General.Dock = DockStyle.Bottom;
                         resultForm.Controls.Add(resultForm.Tb_General);
                         resultForm.Tb_General.ForeColor = Color.White;
                         resultForm.Tb_General.BackColor = Color.Black;
@@ -187,7 +192,9 @@ namespace PixelDrawer
                         resultForm.Tb_General1 = new RichTextBox();
                         resultForm.Tb_General1.Font = new Font(resultForm.Tb_General1.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General1.ReadOnly = true;
-                        resultForm.Tb_General1.Dock = DockStyle.Fill;
+                        resultForm.Tb_General1.MaximumSize = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General1.Size = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General1.Dock = DockStyle.Bottom;
                         resultForm.Controls.Add(resultForm.Tb_General1);
                         resultForm.Tb_General1.ForeColor = Color.White;
                         resultForm.Tb_General1.BackColor = Color.Black;
@@ -195,7 +202,9 @@ namespace PixelDrawer
                         resultForm.Tb_General2 = new RichTextBox();
                         resultForm.Tb_General2.Font = new Font(resultForm.Tb_General2.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General2.ReadOnly = true;
-                        resultForm.Tb_General2.Dock = DockStyle.Fill;
+                        resultForm.Tb_General2.MaximumSize = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General2.Size = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General2.Dock = DockStyle.Bottom;
                         resultForm.Controls.Add(resultForm.Tb_General2);
                         resultForm.Tb_General2.ForeColor = Color.White;
                         resultForm.Tb_General2.BackColor = Color.Black;
@@ -203,7 +212,9 @@ namespace PixelDrawer
                         resultForm.Tb_General3 = new RichTextBox();
                         resultForm.Tb_General3.Font = new Font(resultForm.Tb_General3.Font.FontFamily, (float)(ratioX * 1.0546875));
                         resultForm.Tb_General3.ReadOnly = true;
-                        resultForm.Tb_General3.Dock = DockStyle.Fill;
+                        resultForm.Tb_General3.MaximumSize = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General3.Size = new System.Drawing.Size(width, height);
+                        resultForm.Tb_General3.Dock = DockStyle.Bottom;
                         resultForm.Controls.Add(resultForm.Tb_General3);
                         resultForm.Tb_General3.ForeColor = Color.White;
                         resultForm.Tb_General3.BackColor = Color.Black;
@@ -602,7 +613,7 @@ namespace PixelDrawer
             }
 
             resultForm.SelectedPage.Show();
-            resultForm.Show();
+            resultForm.ShowDialog();
         }
 
         private async void Blink(Color fontColor)
@@ -724,46 +735,23 @@ namespace PixelDrawer
                         MessageBox.Show("Невалидни данни");
                         return;
                 }
-
-                if (isTextMode)
-                {
-                    RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
-                    resultForm.Tb_General.Hide();
-                    resultForm.Tb_General1.Hide();
-                    resultForm.Tb_General2.Hide();
-                    resultForm.Tb_General3.Hide();
-
-                    int displayPageNum = 0;
-                    int.TryParse(tb_BH.Text, out displayPageNum);
-                    
-                    switch (displayPageNum)
-                    {
-                        case 0:
-                            boxes[videoPageNum].BackColor = color;
-                            break;
-                        case 1:
-                            boxes[videoPageNum].BackColor = color;
-                            break;
-                        case 2:
-                            boxes[videoPageNum].BackColor = color;
-                            break;
-                        case 3:
-                            boxes[videoPageNum].BackColor = color;
-                            break;
-                        default:
-                            MessageBox.Show("Изберете страница от 0 до 3");
-                            return;
-                    }
-
-                    resultForm.SelectedPage = boxes[videoPageNum];
-                    resultForm.SelectedPage.Show();
-                }
-                else
-                {
-                    resultForm.BackColor = color;
-                }
                 
-                resultForm.ShowDialog();
+                RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
+                resultForm.Tb_General.Hide();
+                resultForm.Tb_General1.Hide();
+                resultForm.Tb_General2.Hide();
+                resultForm.Tb_General3.Hide();
+
+                int displayPageNum = 0;
+                int.TryParse(tb_BH.Text, out displayPageNum);
+
+                resultForm.BackColor = color;
+                if (resultForm.SelectedPage == null)
+                {
+                    resultForm.SelectedPage = resultForm.Tb_General;
+                }
+                resultForm.SelectedPage.Show();//текстбокс - винаги е черен
+                resultForm.ShowDialog();//рамката
             }
             catch (Exception ex)
             {
