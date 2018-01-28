@@ -34,6 +34,7 @@ namespace PixelDrawer
         public bool isModeSet = false;
         public bool isTextMode = true;
         public ResultForm resultForm;
+        public bool isShowCursorCall = false;
         #endregion
 
         public UserForm()
@@ -113,6 +114,8 @@ namespace PixelDrawer
         //Режим на изображението
         private void SelectedMode(string AL)
         {
+            resultForm.BackColor = Color.Black;
+            resultForm.isModeReset = true;
             try
             {
                 switch (Convert.ToInt32(AL))
@@ -271,6 +274,9 @@ namespace PixelDrawer
                 default:
                     break;
             }
+            isShowCursorCall = true;
+            InsertStyledText();
+            isShowCursorCall = false;
         }
 
         //Информация за курсора
@@ -613,13 +619,13 @@ namespace PixelDrawer
             }
 
             resultForm.SelectedPage.Show();
-            resultForm.ShowDialog();
+            resultForm.Show();
         }
 
         private async void Blink(Color fontColor)
         {
-            resultForm.EscPressed = false;
-            while (!resultForm.EscPressed)
+            resultForm.isModeReset = false;
+            while (!resultForm.isModeReset)
             {
                 await Task.Delay(500);
                 resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
@@ -751,7 +757,7 @@ namespace PixelDrawer
                     resultForm.SelectedPage = resultForm.Tb_General;
                 }
                 resultForm.SelectedPage.Show();//текстбокс - винаги е черен
-                resultForm.ShowDialog();//рамката
+                resultForm.Show();//рамката
             }
             catch (Exception ex)
             {
@@ -803,7 +809,7 @@ namespace PixelDrawer
             {
                 MessageBox.Show("Има пиксел на тази позиция");
             }
-            resultForm.ShowDialog();
+            resultForm.Show();
         }
 
         //Четене на точка
@@ -858,6 +864,7 @@ namespace PixelDrawer
             }
             catch
             {
+                if(!isShowCursorCall)
                 MessageBox.Show("Стойността не е валидно HEX число.");
             }
 

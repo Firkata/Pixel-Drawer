@@ -94,6 +94,7 @@ namespace PixelDrawer
         public Dictionary<string, string> VideoPage2Values { get => videoPage2Values; set => videoPage2Values = value; }
         public Dictionary<string, string> VideoPage3Values { get => videoPage3Values; set => videoPage3Values = value; }
         public Dictionary<string, string> VideoPage4Values { get => videoPage4Values; set => videoPage4Values = value; }
+        public bool isModeReset { get; set; }
         #endregion
 
         #region EventHandlers
