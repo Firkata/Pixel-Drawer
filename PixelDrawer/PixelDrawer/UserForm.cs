@@ -627,7 +627,6 @@ namespace PixelDrawer
                     resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm));
                     resultForm.BlinkThread.Start();
                 }
-                //Blink(textColor);
             }
 
             resultForm.SelectedPage.Show();
@@ -641,10 +640,6 @@ namespace PixelDrawer
             {
                 Thread.Sleep(500);
                 resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
-                if (resultForm.isModeReset)
-                {
-                    Thread.CurrentThread.Abort();
-                }
             }
         }
 
