@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace PixelDrawer
@@ -34,6 +35,7 @@ namespace PixelDrawer
         private bool isTextMode;
         private int pointsDone;
         private RichTextBox selectedPage;
+        private Thread blinkThread;
         #endregion
 
         #region Constructors
@@ -95,6 +97,7 @@ namespace PixelDrawer
         public Dictionary<string, string> VideoPage3Values { get => videoPage3Values; set => videoPage3Values = value; }
         public Dictionary<string, string> VideoPage4Values { get => videoPage4Values; set => videoPage4Values = value; }
         public bool isModeReset { get; set; }
+        public Thread BlinkThread { get => blinkThread; set => blinkThread = value; }
         #endregion
 
         #region EventHandlers

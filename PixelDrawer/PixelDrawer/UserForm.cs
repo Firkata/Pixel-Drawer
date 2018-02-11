@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -361,6 +362,11 @@ namespace PixelDrawer
                 return;
             }
 
+            if(resultForm.BlinkThread != null)
+            {
+                resultForm.BlinkThread.Abort();
+                resultForm.BlinkThread = null;
+            }
             RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
             resultForm.Tb_General.Hide();
             resultForm.Tb_General1.Hide();
@@ -608,27 +614,37 @@ namespace PixelDrawer
             boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
             boxes[displayPage].SelectionBackColor = textBackColor;
 
-            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледане
-
+            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледан
 
             boxes[displayPage].ForeColor = textColor;
 
+            CheckForIllegalCrossThreadCalls = false;
+
             if (byteRepr[0] == '1')
             {
-                Blink(textColor);
+                if (resultForm.BlinkThread == null)
+                {
+                    resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm));
+                    resultForm.BlinkThread.Start();
+                }
+                //Blink(textColor);
             }
 
             resultForm.SelectedPage.Show();
             resultForm.Show();
         }
-
-        private async void Blink(Color fontColor)
+         
+        public void Blink(Color fontColor, ResultForm resultForm)
         {
             resultForm.isModeReset = false;
             while (!resultForm.isModeReset)
             {
-                await Task.Delay(500);
+                Thread.Sleep(500);
                 resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
+                if (resultForm.isModeReset)
+                {
+                    Thread.CurrentThread.Abort();
+                }
             }
         }
 
