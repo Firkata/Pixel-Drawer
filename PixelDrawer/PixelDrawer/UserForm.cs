@@ -613,6 +613,8 @@ namespace PixelDrawer
             boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length - (boxes[displayPage].Text.Length - space.Length);
             boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
             boxes[displayPage].SelectionBackColor = textBackColor;
+            boxes[displayPage].SelectionLength = 0;
+            boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length;
 
             resultForm.SelectedPage = boxes[videoPageNum];//страница за гледан
 
@@ -752,12 +754,29 @@ namespace PixelDrawer
                         MessageBox.Show("Невалидни данни");
                         return;
                 }
-                
+
                 RichTextBox[] boxes = new RichTextBox[] { resultForm.Tb_General, resultForm.Tb_General1, resultForm.Tb_General2, resultForm.Tb_General3 };
-                resultForm.Tb_General.Hide();
-                resultForm.Tb_General1.Hide();
-                resultForm.Tb_General2.Hide();
-                resultForm.Tb_General3.Hide();
+
+                if (resultForm.Tb_General != null)
+                {
+                    resultForm.Tb_General.Hide();
+
+                }
+                if (resultForm.Tb_General1 != null)
+                {
+                    resultForm.Tb_General1.Hide();
+
+                }
+                if (resultForm.Tb_General2 != null)
+                {
+                    resultForm.Tb_General2.Hide();
+
+                }
+                if (resultForm.Tb_General3 != null)
+                {
+                    resultForm.Tb_General3.Hide();
+
+                }
 
                 int displayPageNum = 0;
                 int.TryParse(tb_BH.Text, out displayPageNum);
@@ -767,8 +786,17 @@ namespace PixelDrawer
                 {
                     resultForm.SelectedPage = resultForm.Tb_General;
                 }
-                resultForm.SelectedPage.Show();//текстбокс - винаги е черен
-                resultForm.Show();//рамката
+
+                
+
+                if (isTextMode)
+                {
+                    resultForm.SelectedPage.Show();//текстбокс - винаги е черен
+                    
+                }
+
+                resultForm.Show();
+                
             }
             catch (Exception ex)
             {
