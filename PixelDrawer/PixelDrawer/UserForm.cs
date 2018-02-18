@@ -34,6 +34,7 @@ namespace PixelDrawer
         public int videoPageNum = 0;
         public bool isModeSet = false;
         public bool isTextMode = true;
+        public bool isBlackWhite = true;
         public ResultForm resultForm;
         public bool isShowCursorCall = false;
         #endregion
@@ -124,41 +125,49 @@ namespace PixelDrawer
                     case 0:
                         RenderFormResolution(45, 25);
                         ToggleTextButtons(true);
+                        isBlackWhite = true;
                         isTextMode = true;
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
                         ToggleTextButtons(true);
+                        isBlackWhite = false;
                         isTextMode = true;
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
+                        isBlackWhite = true;
                         isTextMode = true;
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
+                        isBlackWhite = false;
                         isTextMode = true;
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
                         ToggleTextButtons(false);
+                        isBlackWhite = false;
                         isTextMode = false;
                         break;
                     case 5:
                         RenderFormResolution(320, 200);
                         ToggleTextButtons(false);
+                        isBlackWhite = false;
                         isTextMode = false;
                         break;
                     case 6:
                         RenderFormResolution(640, 200);
                         ToggleTextButtons(false);
+                        isBlackWhite = false;
                         isTextMode = false;
                         break;
                     case 7:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
+                        isBlackWhite = false;
                         isTextMode = true;
                         break;
                     default:
@@ -600,15 +609,21 @@ namespace PixelDrawer
             int remainingBits = 8 - byteRepr.Length;
             byteRepr = new string('0', remainingBits) + byteRepr;
 
-            int red = byteRepr[1] == '1' ? 255 : 0;
-            int green = byteRepr[2] == '1' ? 255 : 0;
-            int blue = byteRepr[3] == '1' ? 255 : 0;
-            Color textBackColor = Color.FromArgb(red, green, blue);
-            
-            red = byteRepr[5] == '1' ? 255 : 0;
-            green = byteRepr[6] == '1' ? 255 : 0;
-            blue = byteRepr[7] == '1' ? 255 : 0;
-            Color textColor = Color.FromArgb(red, green, blue);
+            Color textBackColor = Color.Black;
+            Color textColor = Color.White;
+
+            if (!isBlackWhite)
+            {
+                int red = byteRepr[1] == '1' ? 255 : 0;
+                int green = byteRepr[2] == '1' ? 255 : 0;
+                int blue = byteRepr[3] == '1' ? 255 : 0;
+                textBackColor = Color.FromArgb(red, green, blue);
+
+                red = byteRepr[5] == '1' ? 255 : 0;
+                green = byteRepr[6] == '1' ? 255 : 0;
+                blue = byteRepr[7] == '1' ? 255 : 0;
+                textColor = Color.FromArgb(red, green, blue); 
+            }
 
             boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length - (boxes[displayPage].Text.Length - space.Length);
             boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
@@ -616,7 +631,7 @@ namespace PixelDrawer
             boxes[displayPage].SelectionLength = 0;
             boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length;
 
-            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледан
+            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледанe
 
             boxes[displayPage].ForeColor = textColor;
 
