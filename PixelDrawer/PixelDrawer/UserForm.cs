@@ -37,6 +37,10 @@ namespace PixelDrawer
         public bool isBlackWhite = true;
         public ResultForm resultForm;
         public bool isShowCursorCall = false;
+        public List<Dictionary<string, int>> selections;
+        public List<Dictionary<string, int>> selections1;
+        public List<Dictionary<string, int>> selections2;
+        public List<Dictionary<string, int>> selections3;
         #endregion
 
         public UserForm()
@@ -129,6 +133,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 45;
                         resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, int>>();
+                        selections1 = new List<Dictionary<string, int>>();
+                        selections2 = new List<Dictionary<string, int>>();
+                        selections3 = new List<Dictionary<string, int>>();
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
@@ -137,6 +145,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 45;
                         resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, int>>();
+                        selections1 = new List<Dictionary<string, int>>();
+                        selections2 = new List<Dictionary<string, int>>();
+                        selections3 = new List<Dictionary<string, int>>();
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
@@ -145,6 +157,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 80;
                         resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, int>>();
+                        selections1 = new List<Dictionary<string, int>>();
+                        selections2 = new List<Dictionary<string, int>>();
+                        selections3 = new List<Dictionary<string, int>>();
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
@@ -153,6 +169,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 80;
                         resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, int>>();
+                        selections1 = new List<Dictionary<string, int>>();
+                        selections2 = new List<Dictionary<string, int>>();
+                        selections3 = new List<Dictionary<string, int>>();
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
@@ -411,7 +431,9 @@ namespace PixelDrawer
             string dictValue = string.Empty;
             int currentPageCursorRow = 0;
             int currentPageCursorCol = 0;
-
+            List<List<Dictionary<string, int>>> allSelectionLists = new List<List<Dictionary<string, int>>> {
+                selections, selections1, selections2, selections3
+            };
 
             switch (displayPage)
             {
@@ -459,7 +481,7 @@ namespace PixelDrawer
                     selectionStart = cursorRow1 + cursorCol1;
                     currentPageCursorCol = cursorCol1;
                     currentPageCursorRow = cursorRow1;
-
+                    
                     space = new string(' ', cursorCol1);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -545,7 +567,7 @@ namespace PixelDrawer
                     selectionStart = cursorRow3 + cursorCol3;
                     currentPageCursorCol = cursorCol3;
                     currentPageCursorRow = cursorRow3;
-
+                    
                     space = new string(' ', cursorCol3);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -631,6 +653,8 @@ namespace PixelDrawer
             string byteRepr = "";
             int remainder;
 
+
+            //TODO: Set different forecolor and backcolor for different insertions
             while (styleInDecimal > 0)
             {
                 remainder = styleInDecimal % 2;
@@ -667,14 +691,19 @@ namespace PixelDrawer
             boxes[displayPage].ForeColor = textColor;
 
             CheckForIllegalCrossThreadCalls = false;
-
+            //TODO: Implement logic for changing selection data in selection lists dynamically if text is overwritten
             if (byteRepr[0] == '1')
             {
-                if (resultForm.BlinkThread == null)
-                {
-                    resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm));
-                    resultForm.BlinkThread.Start();
-                }
+                allSelectionLists[displayPage].Add(new Dictionary<string, int>{
+                    {"selectionStart", position },
+                    {"selectionEnd", position + generatedText.Length }
+                });
+            }
+ 
+            if (allSelectionLists[displayPage].Count > 0 && resultForm.BlinkThread == null)
+            {
+                resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm, allSelectionLists[displayPage]));
+                resultForm.BlinkThread.Start();
             }
 
             if (isShowCursorCall)
@@ -685,14 +714,26 @@ namespace PixelDrawer
             resultForm.Show();
         }
          
-        public void Blink(Color fontColor, ResultForm resultForm)
+        public void Blink(Color fontColor, ResultForm resultForm, List<Dictionary<string, int>> selections)
         {
-            resultForm.isModeReset = false;
-            while (!resultForm.isModeReset)
+            while (true)
             {
+                foreach (Dictionary<string, int> selectionData in selections)
+                {
+                    int start = 0;
+                    int end = 0;
+
+                    selectionData.TryGetValue("selectionStart", out start);
+                    selectionData.TryGetValue("selectionEnd", out end);
+
+                    resultForm.SelectedPage.SelectionStart = start;
+                    resultForm.SelectedPage.SelectionLength = end - start;
+                    resultForm.SelectedPage.SelectionColor = resultForm.SelectedPage.SelectionColor == fontColor ? resultForm.SelectedPage.SelectionBackColor : fontColor;
+                }
+                resultForm.SelectedPage.SelectionStart = resultForm.Tb_General.Text.Length;
+                resultForm.SelectedPage.SelectionLength = 0;
                 Thread.Sleep(500);
-                resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
-            }
+            } 
         }
 
         private void ReadStyledText()
