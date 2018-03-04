@@ -127,24 +127,32 @@ namespace PixelDrawer
                         ToggleTextButtons(true);
                         isBlackWhite = true;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 45;
+                        resultForm.MaxRows = 25;
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = false;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 45;
+                        resultForm.MaxRows = 25;
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = true;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 80;
+                        resultForm.MaxRows = 25;
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = false;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 80;
+                        resultForm.MaxRows = 25;
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
@@ -193,7 +201,7 @@ namespace PixelDrawer
                         int width = resolution.Width - 15;
 
                         resultForm.Tb_General = new RichTextBox();
-                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 0.64444));
                         resultForm.Tb_General.ReadOnly = true;
                         resultForm.Tb_General.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General.Size = new System.Drawing.Size(width, height);
@@ -389,6 +397,7 @@ namespace PixelDrawer
                 MessageBox.Show("Изберете страница от 0 до 3");
                 return;
             }
+            string currentText = boxes[displayPage].Text;
             string generatedText = "";
             for (int i = 0; i < characterCount; i++)
             {
@@ -397,25 +406,21 @@ namespace PixelDrawer
 
             // TODO: Implement calculation of cursor position
             //cursorRow -= 1;
-            var text = new StringBuilder();
             string space = string.Empty;
             int selectionStart = 0;
             string dictValue = string.Empty;
+            int currentPageCursorRow = 0;
+            int currentPageCursorCol = 0;
 
 
             switch (displayPage)
             {
                 case 0:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow; i++)
-                    {
-                        text.AppendLine();
-                    }
-
-                    space = new string(' ', cursorCol);
                     selectionStart = cursorRow + cursorCol;
+                    currentPageCursorCol = cursorCol;
+                    currentPageCursorRow = cursorRow;
 
-                    if(tb_AL.Text.Length < 2)
+                    if (tb_AL.Text.Length < 2)
                     {
                         tb_AL.Text = "0" + tb_AL.Text;
                     }
@@ -451,12 +456,10 @@ namespace PixelDrawer
                     resultForm.VideoPage1Values.Add("CL", tb_CL.Text);
                     break;
                 case 1:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow1; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow1 + cursorCol1;
+                    currentPageCursorCol = cursorCol1;
+                    currentPageCursorRow = cursorRow1;
+
                     space = new string(' ', cursorCol1);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -496,12 +499,10 @@ namespace PixelDrawer
 
                     break;
                 case 2:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow2; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow2 + cursorCol2;
+                    currentPageCursorCol = cursorCol2;
+                    currentPageCursorRow = cursorRow2;
+
                     space = new string(' ', cursorCol2);
 
                     if (tb_AL.Text.Length < 2)
@@ -541,12 +542,10 @@ namespace PixelDrawer
                     resultForm.VideoPage3Values.Add("CL", tb_CL.Text);
                     break;
                 case 3:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow3; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow3 + cursorCol3;
+                    currentPageCursorCol = cursorCol3;
+                    currentPageCursorRow = cursorRow3;
+
                     space = new string(' ', cursorCol3);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -588,11 +587,43 @@ namespace PixelDrawer
                     break;
             }
 
-            text.Append(space);
-            text.Append(generatedText);
+            
+            int position = currentPageCursorRow * resultForm.MaxRowLenght + currentPageCursorCol;
+            
+            var newText = new StringBuilder(Regex.Replace(currentText, @"\n|\r", String.Empty));
+            if (position > newText.Length)
+            {
+                newText.Append(new String(' ', position-newText.Length));
+            }
+
+            try
+            {
+                newText.Remove(position, generatedText.Length);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                newText.Remove(position, newText.Length-position);
+            }
+
+            newText.Insert(position, generatedText);
+
+            var resultText = new StringBuilder();
+            for (int i=0; i<=newText.Length / resultForm.MaxRowLenght; i++)
+            {
+                try
+                {
+                    resultText.Append(newText.ToString().Substring(i * resultForm.MaxRowLenght, resultForm.MaxRowLenght) + Environment.NewLine);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    resultText.Append(newText.ToString().Substring(i * resultForm.MaxRowLenght, newText.Length % resultForm.MaxRowLenght));
+                }
+            }
+           
+
 
             boxes[displayPage].Text = "";
-            boxes[displayPage].Text = resultForm.Text.Insert(0, text.ToString());
+            boxes[displayPage].Text = resultForm.Text.Insert(0, resultText.ToString());
             boxes[displayPage].SelectionStart = selectionStart;
             boxes[displayPage].SelectionLength = 0;
             
@@ -646,6 +677,10 @@ namespace PixelDrawer
                 }
             }
 
+            if (isShowCursorCall)
+            {
+                boxes[displayPage].SelectionStart = position + new Regex(Regex.Escape(Environment.NewLine)).Matches(resultText.ToString()).Count;
+            }
             resultForm.SelectedPage.Show();
             resultForm.Show();
         }
