@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -400,7 +402,7 @@ namespace PixelDrawer
                 return;
             }
 
-            if(resultForm.BlinkThread != null)
+            if (resultForm.BlinkThread != null)
             {
                 resultForm.BlinkThread.Abort();
                 resultForm.BlinkThread = null;
@@ -413,7 +415,7 @@ namespace PixelDrawer
             char displayCharacter = (char)HexToDecimal(tb_AL.Text);
             int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int displayPage = HexToDecimal(tb_BH.Text);
-            if(displayPage <0 || displayPage > 3)
+            if (displayPage < 0 || displayPage > 3)
             {
                 MessageBox.Show("Изберете страница от 0 до 3");
                 return;
@@ -425,7 +427,6 @@ namespace PixelDrawer
                 generatedText += displayCharacter;
             }
 
-            // TODO: Implement calculation of cursor position
             //cursorRow -= 1;
             string space = string.Empty;
             int selectionStart = 0;
@@ -453,7 +454,7 @@ namespace PixelDrawer
                         resultForm.VideoPage1Values.Remove("AL");
                     }
                     resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
-                    
+
                     if (tb_CH.Text.Length < 2)
                     {
                         tb_CH.Text = "0" + tb_CH.Text;
@@ -482,7 +483,7 @@ namespace PixelDrawer
                     selectionStart = cursorRow1 + cursorCol1;
                     currentPageCursorCol = cursorCol1;
                     currentPageCursorRow = cursorRow1;
-                    
+
                     space = new string(' ', cursorCol1);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -568,7 +569,7 @@ namespace PixelDrawer
                     selectionStart = cursorRow3 + cursorCol3;
                     currentPageCursorCol = cursorCol3;
                     currentPageCursorRow = cursorRow3;
-                    
+
                     space = new string(' ', cursorCol3);
                     if (tb_AL.Text.Length < 2)
                     {
@@ -610,13 +611,13 @@ namespace PixelDrawer
                     break;
             }
 
-            
+
             int position = currentPageCursorRow * resultForm.MaxRowLenght + currentPageCursorCol;
-            
+
             var newText = new StringBuilder(Regex.Replace(currentText, @"\n|\r", String.Empty));
             if (position > newText.Length)
             {
-                newText.Append(new String(' ', position-newText.Length));
+                newText.Append(new String(' ', position - newText.Length));
             }
 
             try
@@ -625,13 +626,13 @@ namespace PixelDrawer
             }
             catch (ArgumentOutOfRangeException)
             {
-                newText.Remove(position, newText.Length-position);
+                newText.Remove(position, newText.Length - position);
             }
 
             newText.Insert(position, generatedText);
 
             var resultText = new StringBuilder();
-            for (int i=0; i<=newText.Length / resultForm.MaxRowLenght; i++)
+            for (int i = 0; i <= newText.Length / resultForm.MaxRowLenght; i++)
             {
                 try
                 {
@@ -642,20 +643,19 @@ namespace PixelDrawer
                     resultText.Append(newText.ToString().Substring(i * resultForm.MaxRowLenght, newText.Length % resultForm.MaxRowLenght));
                 }
             }
-           
+
 
 
             boxes[displayPage].Text = "";
             boxes[displayPage].Text = resultForm.Text.Insert(0, resultText.ToString());
             boxes[displayPage].SelectionStart = selectionStart;
             boxes[displayPage].SelectionLength = 0;
-            
+
             int styleInDecimal = HexToDecimal(tb_BL.Text);
             string byteRepr = "";
             int remainder;
 
 
-            //TODO: Set different forecolor and backcolor for different insertions
             while (styleInDecimal > 0)
             {
                 remainder = styleInDecimal % 2;
@@ -683,7 +683,7 @@ namespace PixelDrawer
 
                 fontColorRed = byteRepr[5] == '1' ? 255 : 0;
                 fontColorGreen = byteRepr[6] == '1' ? 255 : 0;
-                fontColorBlue = byteRepr[7] == '1' ? 255 : 0; 
+                fontColorBlue = byteRepr[7] == '1' ? 255 : 0;
             }
 
 
@@ -691,6 +691,189 @@ namespace PixelDrawer
 
             CheckForIllegalCrossThreadCalls = false;
             //TODO: Implement logic for changing selection data in selection lists dynamically if text is overwritten
+            
+            int currentStart = position;
+            int currentEnd = position + generatedText.Length;
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            MemoryStream stream = new MemoryStream();
+            formatter.Serialize(stream, allSelectionLists[displayPage]);
+            stream.Position = 0;
+            List<Dictionary<string, int>> selectionsCopy = (List<Dictionary<string, int>>)formatter.Deserialize(stream);
+
+            List<Dictionary<string, int>> toAdd = new List<Dictionary<string, int>>();
+            List<int> toRemove = new List<int>();
+            if (!isShowCursorCall)
+            {
+                for (int i = 0; i < selectionsCopy.Count; i++)
+                {
+                    Dictionary<string, int> selectionData = selectionsCopy[i];
+                    selectionData.TryGetValue("selectionStart", out int start);
+                    selectionData.TryGetValue("selectionEnd", out int end);
+
+                    if(currentStart == start && currentEnd == end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                    }else if (currentStart >= start && currentEnd <= end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+
+                        selectionData.TryGetValue("blinking", out int blinking);
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out int backRed);
+                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
+                            selectionData.TryGetValue("fontColorRed", out int fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue }
+                            });
+
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking }
+                            });
+
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking }
+                            });
+                        }
+                    }else if(currentStart >= start && currentStart <= end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                        selectionData.TryGetValue("blinking", out int blinking);
+
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out int backRed);
+                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
+                            selectionData.TryGetValue("fontColorRed", out int fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
+
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking }
+                            });
+                        }
+                    }else if(currentEnd <= end && currentEnd >= start)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                        selectionData.TryGetValue("blinking", out int blinking);
+
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out int backRed);
+                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
+                            selectionData.TryGetValue("fontColorRed", out int fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
+
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, int>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking }
+                            });
+                        }
+                    }
+                }
+            }
+
+            foreach(int indexToRemove in toRemove)
+            {
+                try
+                {
+                    allSelectionLists[displayPage].RemoveAt(indexToRemove);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    allSelectionLists[displayPage].RemoveAt(indexToRemove-1);
+                }
+                
+            }
+
+            foreach(Dictionary<string, int> item in toAdd){
+                allSelectionLists[displayPage].Add(item);
+            }
+            
             if (byteRepr[0] == '1')
             {
                 allSelectionLists[displayPage].Add(new Dictionary<string, int>{
@@ -704,7 +887,8 @@ namespace PixelDrawer
                     { "fontColorGreen", fontColorGreen },
                     { "fontColorBlue", fontColorBlue }
                 });
-            }else if(!isShowCursorCall)
+            }
+            else if (!isShowCursorCall)
             {
                 allSelectionLists[displayPage].Add(new Dictionary<string, int>{
                     {"selectionStart", position },
@@ -713,7 +897,7 @@ namespace PixelDrawer
                 });
             }
 
-            foreach(Dictionary<string, int> selectionData in allSelectionLists[displayPage])
+            foreach (Dictionary<string, int> selectionData in allSelectionLists[displayPage])
             {
                 selectionData.TryGetValue("selectionStart", out int start);
                 selectionData.TryGetValue("selectionEnd", out int end);
@@ -721,7 +905,7 @@ namespace PixelDrawer
                 selectionData.TryGetValue("backgroundGreen", out int green);
                 selectionData.TryGetValue("backgroundBlue", out int blue);
 
-                boxes[displayPage].SelectionStart = start;
+                boxes[displayPage].SelectionStart = start + start / resultForm.MaxRowLenght;
                 boxes[displayPage].SelectionLength = end - start;
                 boxes[displayPage].SelectionBackColor = Color.FromArgb(red, green, blue);
             }
@@ -732,15 +916,16 @@ namespace PixelDrawer
                 return blinking == 1;
             });
 
+            int actualPosition = position + new Regex(Regex.Escape(Environment.NewLine)).Matches(resultText.ToString()).Count;
             if (blinkingSelectionExists && resultForm.BlinkThread == null)
             {
-                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[displayPage], position, isShowCursorCall));
+                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[displayPage], actualPosition, isShowCursorCall));
                 resultForm.BlinkThread.Start();
             }
 
             if (isShowCursorCall)
             {
-                boxes[displayPage].SelectionStart = position + new Regex(Regex.Escape(Environment.NewLine)).Matches(resultText.ToString()).Count;
+                boxes[displayPage].SelectionStart = actualPosition;
             }
             resultForm.SelectedPage.Show();
             resultForm.Show();
@@ -769,7 +954,7 @@ namespace PixelDrawer
 
                         Color fontColor = Color.FromArgb(red, green, blue);
 
-                        resultForm.SelectedPage.SelectionStart = start;
+                        resultForm.SelectedPage.SelectionStart = start + start / resultForm.MaxRowLenght;
                         resultForm.SelectedPage.SelectionLength = end - start;
                         bool colorsEqual = (resultForm.SelectedPage.SelectionColor.R == red
                            && resultForm.SelectedPage.SelectionColor.G == green
