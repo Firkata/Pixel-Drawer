@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -667,28 +668,26 @@ namespace PixelDrawer
             Color textBackColor = Color.Black;
             Color textColor = Color.White;
 
+            int backColorRed = 0;
+            int backColorGreen = 0;
+            int backColorBlue = 0;
+            int fontColorRed = 255;
+            int fontColorGreen = 255;
+            int fontColorBlue = 255;
+
             if (!isBlackWhite)
             {
-                int red = byteRepr[1] == '1' ? 255 : 0;
-                int green = byteRepr[2] == '1' ? 255 : 0;
-                int blue = byteRepr[3] == '1' ? 255 : 0;
-                textBackColor = Color.FromArgb(red, green, blue);
+                backColorRed = byteRepr[1] == '1' ? 255 : 0;
+                backColorGreen = byteRepr[2] == '1' ? 255 : 0;
+                backColorBlue = byteRepr[3] == '1' ? 255 : 0;
 
-                red = byteRepr[5] == '1' ? 255 : 0;
-                green = byteRepr[6] == '1' ? 255 : 0;
-                blue = byteRepr[7] == '1' ? 255 : 0;
-                textColor = Color.FromArgb(red, green, blue); 
+                fontColorRed = byteRepr[5] == '1' ? 255 : 0;
+                fontColorGreen = byteRepr[6] == '1' ? 255 : 0;
+                fontColorBlue = byteRepr[7] == '1' ? 255 : 0; 
             }
 
-            boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length - (boxes[displayPage].Text.Length - space.Length);
-            boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
-            boxes[displayPage].SelectionBackColor = textBackColor;
-            boxes[displayPage].SelectionLength = 0;
-            boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length;
 
             resultForm.SelectedPage = boxes[videoPageNum];//страница за гледанe
-
-            boxes[displayPage].ForeColor = textColor;
 
             CheckForIllegalCrossThreadCalls = false;
             //TODO: Implement logic for changing selection data in selection lists dynamically if text is overwritten
@@ -696,13 +695,46 @@ namespace PixelDrawer
             {
                 allSelectionLists[displayPage].Add(new Dictionary<string, int>{
                     {"selectionStart", position },
-                    {"selectionEnd", position + generatedText.Length }
+                    {"selectionEnd", position + generatedText.Length },
+                    { "blinking", 1 },
+                    { "backgroundRed", backColorRed },
+                    { "backgroundGreen", backColorGreen },
+                    { "backgroundBlue", backColorRed },
+                    { "fontColorRed", fontColorRed },
+                    { "fontColorGreen", fontColorGreen },
+                    { "fontColorBlue", fontColorBlue }
+                });
+            }else if(!isShowCursorCall)
+            {
+                allSelectionLists[displayPage].Add(new Dictionary<string, int>{
+                    {"selectionStart", position },
+                    {"selectionEnd", position + generatedText.Length },
+                    { "blinking", 0 },
                 });
             }
- 
-            if (allSelectionLists[displayPage].Count > 0 && resultForm.BlinkThread == null)
+
+            foreach(Dictionary<string, int> selectionData in allSelectionLists[displayPage])
             {
-                resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm, allSelectionLists[displayPage]));
+                selectionData.TryGetValue("selectionStart", out int start);
+                selectionData.TryGetValue("selectionEnd", out int end);
+                selectionData.TryGetValue("backgroundRed", out int red);
+                selectionData.TryGetValue("backgroundGreen", out int green);
+                selectionData.TryGetValue("backgroundBlue", out int blue);
+
+                boxes[displayPage].SelectionStart = start;
+                boxes[displayPage].SelectionLength = end - start;
+                boxes[displayPage].SelectionBackColor = Color.FromArgb(red, green, blue);
+            }
+
+            bool blinkingSelectionExists = allSelectionLists[displayPage].Any(x => {
+                int blinking;
+                x.TryGetValue("blinking", out blinking);
+                return blinking == 1;
+            });
+
+            if (blinkingSelectionExists && resultForm.BlinkThread == null)
+            {
+                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[displayPage], position, isShowCursorCall));
                 resultForm.BlinkThread.Start();
             }
 
@@ -714,24 +746,50 @@ namespace PixelDrawer
             resultForm.Show();
         }
          
-        public void Blink(Color fontColor, ResultForm resultForm, List<Dictionary<string, int>> selections)
+        public void Blink(ResultForm resultForm, List<Dictionary<string, int>> selections, int position, bool showCursorCall)
         {
             while (true)
             {
                 foreach (Dictionary<string, int> selectionData in selections)
                 {
-                    int start = 0;
-                    int end = 0;
+                    int blinking = 0;
+                    selectionData.TryGetValue("blinking", out blinking);
 
-                    selectionData.TryGetValue("selectionStart", out start);
-                    selectionData.TryGetValue("selectionEnd", out end);
+                    if (blinking == 1)
+                    {
+                        int start = 0;
+                        int end = 0;
 
-                    resultForm.SelectedPage.SelectionStart = start;
-                    resultForm.SelectedPage.SelectionLength = end - start;
-                    resultForm.SelectedPage.SelectionColor = resultForm.SelectedPage.SelectionColor == fontColor ? resultForm.SelectedPage.SelectionBackColor : fontColor;
+                        selectionData.TryGetValue("selectionStart", out start);
+                        selectionData.TryGetValue("selectionEnd", out end);
+
+                        selectionData.TryGetValue("fontColorRed", out int red);
+                        selectionData.TryGetValue("fontColorGreen", out int green);
+                        selectionData.TryGetValue("fontColorBlue", out int blue);
+
+                        Color fontColor = Color.FromArgb(red, green, blue);
+
+                        resultForm.SelectedPage.SelectionStart = start;
+                        resultForm.SelectedPage.SelectionLength = end - start;
+                        bool colorsEqual = (resultForm.SelectedPage.SelectionColor.R == red
+                           && resultForm.SelectedPage.SelectionColor.G == green
+                           && resultForm.SelectedPage.SelectionColor.B == blue)
+                           || resultForm.SelectedPage.SelectionColor == fontColor;
+
+                        resultForm.SelectedPage.SelectionColor = colorsEqual ? resultForm.SelectedPage.BackColor : fontColor;
+                        if (colorsEqual)
+                        {
+                            resultForm.SelectedPage.SelectionColor = resultForm.SelectedPage.BackColor;
+                        }
+                        else
+                        {
+                            resultForm.SelectedPage.SelectionColor = fontColor;
+                        }
+                    }
+                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : resultForm.Tb_General.Text.Length;
+                    resultForm.SelectedPage.SelectionLength = 0;
                 }
-                resultForm.SelectedPage.SelectionStart = resultForm.Tb_General.Text.Length;
-                resultForm.SelectedPage.SelectionLength = 0;
+                
                 Thread.Sleep(500);
             } 
         }
