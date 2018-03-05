@@ -35,6 +35,7 @@ namespace PixelDrawer
         public int cursorRow3;
         public int cursorCol3;
         public int videoPageNum = 0;
+        public int selectedPageNum = 0;
         public bool isModeSet = false;
         public bool isTextMode = true;
         public bool isBlackWhite = true;
@@ -358,18 +359,22 @@ namespace PixelDrawer
             {
                 case 0:
                     resultForm.SelectedPage = resultForm.Tb_General;
+                    selectedPageNum = 0;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 1:
                     resultForm.SelectedPage = resultForm.Tb_General1;
+                    selectedPageNum = 1;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 2:
                     resultForm.SelectedPage = resultForm.Tb_General2;
+                    selectedPageNum = 2;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 3:
                     resultForm.SelectedPage = resultForm.Tb_General3;
+                    selectedPageNum = 3;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 default:
@@ -686,8 +691,7 @@ namespace PixelDrawer
                 fontColorBlue = byteRepr[7] == '1' ? 255 : 0;
             }
 
-
-            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледанe
+            resultForm.SelectedPage = boxes[selectedPageNum];//страница за гледанe  
 
             CheckForIllegalCrossThreadCalls = false;
             //TODO: Implement logic for changing selection data in selection lists dynamically if text is overwritten
@@ -919,19 +923,21 @@ namespace PixelDrawer
             int actualPosition = position + new Regex(Regex.Escape(Environment.NewLine)).Matches(resultText.ToString()).Count;
             if (blinkingSelectionExists && resultForm.BlinkThread == null)
             {
-                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[displayPage], actualPosition, isShowCursorCall));
+                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[selectedPageNum], actualPosition, isShowCursorCall, boxes[displayPage]));
                 resultForm.BlinkThread.Start();
             }
 
             if (isShowCursorCall)
             {
                 boxes[displayPage].SelectionStart = actualPosition;
+                resultForm.SelectedPage = boxes[displayPage];   
             }
+            resultForm.SelectedPage.Select();
             resultForm.SelectedPage.Show();
             resultForm.Show();
         }
          
-        public void Blink(ResultForm resultForm, List<Dictionary<string, int>> selections, int position, bool showCursorCall)
+        public void Blink(ResultForm resultForm, List<Dictionary<string, int>> selections, int position, bool showCursorCall, RichTextBox manipulationPage)
         {
             while (true)
             {
@@ -971,7 +977,7 @@ namespace PixelDrawer
                             resultForm.SelectedPage.SelectionColor = fontColor;
                         }
                     }
-                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : resultForm.Tb_General.Text.Length;
+                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : resultForm.SelectedPage.Text.Length;
                     resultForm.SelectedPage.SelectionLength = 0;
                 }
                 
