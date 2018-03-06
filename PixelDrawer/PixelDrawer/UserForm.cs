@@ -41,10 +41,10 @@ namespace PixelDrawer
         public bool isBlackWhite = true;
         public ResultForm resultForm;
         public bool isShowCursorCall = false;
-        public List<Dictionary<string, int>> selections;
-        public List<Dictionary<string, int>> selections1;
-        public List<Dictionary<string, int>> selections2;
-        public List<Dictionary<string, int>> selections3;
+        public List<Dictionary<string, dynamic>> selections;
+        public List<Dictionary<string, dynamic>> selections1;
+        public List<Dictionary<string, dynamic>> selections2;
+        public List<Dictionary<string, dynamic>> selections3;
         #endregion
 
         public UserForm()
@@ -137,10 +137,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 45;
                         resultForm.MaxRows = 25;
-                        selections = new List<Dictionary<string, int>>();
-                        selections1 = new List<Dictionary<string, int>>();
-                        selections2 = new List<Dictionary<string, int>>();
-                        selections3 = new List<Dictionary<string, int>>();
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
@@ -149,10 +149,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 45;
                         resultForm.MaxRows = 25;
-                        selections = new List<Dictionary<string, int>>();
-                        selections1 = new List<Dictionary<string, int>>();
-                        selections2 = new List<Dictionary<string, int>>();
-                        selections3 = new List<Dictionary<string, int>>();
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
@@ -161,10 +161,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 80;
                         resultForm.MaxRows = 25;
-                        selections = new List<Dictionary<string, int>>();
-                        selections1 = new List<Dictionary<string, int>>();
-                        selections2 = new List<Dictionary<string, int>>();
-                        selections3 = new List<Dictionary<string, int>>();
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
@@ -173,10 +173,10 @@ namespace PixelDrawer
                         isTextMode = true;
                         resultForm.MaxRowLenght = 80;
                         resultForm.MaxRows = 25;
-                        selections = new List<Dictionary<string, int>>();
-                        selections1 = new List<Dictionary<string, int>>();
-                        selections2 = new List<Dictionary<string, int>>();
-                        selections3 = new List<Dictionary<string, int>>();
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
@@ -438,9 +438,29 @@ namespace PixelDrawer
             string dictValue = string.Empty;
             int currentPageCursorRow = 0;
             int currentPageCursorCol = 0;
-            List<List<Dictionary<string, int>>> allSelectionLists = new List<List<Dictionary<string, int>>> {
+            List<List<Dictionary<string, dynamic>>> allSelectionLists = new List<List<Dictionary<string, dynamic>>> {
                 selections, selections1, selections2, selections3
             };
+
+            if (tb_AL.Text.Length < 2)
+            {
+                tb_AL.Text = "0" + tb_AL.Text;
+            }
+
+            if (tb_BL.Text.Length < 2)
+            {
+                tb_BL.Text = "0" + tb_BL.Text;
+            }
+
+            if (tb_CH.Text.Length < 2)
+            {
+                tb_CH.Text = "0" + tb_CH.Text;
+            }
+
+            if (tb_CL.Text.Length < 2)
+            {
+                tb_CL.Text = "0" + tb_CL.Text;
+            }
 
             switch (displayPage)
             {
@@ -449,168 +469,24 @@ namespace PixelDrawer
                     currentPageCursorCol = cursorCol;
                     currentPageCursorRow = cursorRow;
 
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("AL");
-                    }
-                    resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("CH");
-                    }
-                    resultForm.VideoPage1Values.Add("CH", tb_CH.Text);
-
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage1Values.Add("CL", tb_CL.Text);
                     break;
                 case 1:
                     selectionStart = cursorRow1 + cursorCol1;
                     currentPageCursorCol = cursorCol1;
                     currentPageCursorRow = cursorRow1;
-
-                    space = new string(' ', cursorCol1);
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage2Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage2Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage2Values.Add("CL", tb_CL.Text);
-
+                    
                     break;
                 case 2:
                     selectionStart = cursorRow2 + cursorCol2;
                     currentPageCursorCol = cursorCol2;
                     currentPageCursorRow = cursorRow2;
-
-                    space = new string(' ', cursorCol2);
-
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage3Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage3Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage3Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage3Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage3Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage3Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage3Values.Add("CL", tb_CL.Text);
+                    
                     break;
                 case 3:
                     selectionStart = cursorRow3 + cursorCol3;
                     currentPageCursorCol = cursorCol3;
                     currentPageCursorRow = cursorRow3;
-
-                    space = new string(' ', cursorCol3);
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage4Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage4Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage4Values.Add("CL", tb_CL.Text);
+                    
                     break;
                 default:
                     break;
@@ -703,17 +579,17 @@ namespace PixelDrawer
             MemoryStream stream = new MemoryStream();
             formatter.Serialize(stream, allSelectionLists[displayPage]);
             stream.Position = 0;
-            List<Dictionary<string, int>> selectionsCopy = (List<Dictionary<string, int>>)formatter.Deserialize(stream);
+            List<Dictionary<string, dynamic>> selectionsCopy = (List<Dictionary<string, dynamic>>)formatter.Deserialize(stream);
 
-            List<Dictionary<string, int>> toAdd = new List<Dictionary<string, int>>();
+            List<Dictionary<string, dynamic>> toAdd = new List<Dictionary<string, dynamic>>();
             List<int> toRemove = new List<int>();
             if (!isShowCursorCall)
             {
                 for (int i = 0; i < selectionsCopy.Count; i++)
                 {
-                    Dictionary<string, int> selectionData = selectionsCopy[i];
-                    selectionData.TryGetValue("selectionStart", out int start);
-                    selectionData.TryGetValue("selectionEnd", out int end);
+                    Dictionary<string, dynamic> selectionData = selectionsCopy[i];
+                    selectionData.TryGetValue("selectionStart", out dynamic start);
+                    selectionData.TryGetValue("selectionEnd", out dynamic end);
 
                     if(currentStart == start && currentEnd == end)
                     {
@@ -728,16 +604,16 @@ namespace PixelDrawer
                             toRemove.Add(i);
                         }
 
-                        selectionData.TryGetValue("blinking", out int blinking);
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
                         if (blinking == 1)
                         {
-                            selectionData.TryGetValue("backgroundRed", out int backRed);
-                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
-                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
-                            selectionData.TryGetValue("fontColorRed", out int fontRed);
-                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
-                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
-                            toAdd.Add(new Dictionary<string, int>
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", start },
                                 { "selectionEnd", currentStart },
@@ -747,10 +623,14 @@ namespace PixelDrawer
                                 { "backgroundBlue", backBlue },
                                 { "fontColorRed", fontRed },
                                 { "fontColorGreen", fontGreen },
-                                { "fontColorBlue", fontBlue }
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
 
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", currentEnd },
                                 { "selectionEnd", end },
@@ -760,23 +640,35 @@ namespace PixelDrawer
                                 { "backgroundBlue", backBlue },
                                 { "fontColorRed", fontRed },
                                 { "fontColorGreen", fontGreen },
-                                { "fontColorBlue", fontBlue }
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                         else
                         {
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", start },
                                 { "selectionEnd", currentStart },
-                                { "blinking", blinking }
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
 
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", currentEnd },
                                 { "selectionEnd", end },
-                                { "blinking", blinking }
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                     }else if(currentStart >= start && currentStart <= end)
@@ -785,18 +677,18 @@ namespace PixelDrawer
                         {
                             toRemove.Add(i);
                         }
-                        selectionData.TryGetValue("blinking", out int blinking);
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
 
                         if (blinking == 1)
                         {
-                            selectionData.TryGetValue("backgroundRed", out int backRed);
-                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
-                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
-                            selectionData.TryGetValue("fontColorRed", out int fontRed);
-                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
-                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
 
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", start },
                                 { "selectionEnd", currentStart },
@@ -806,16 +698,24 @@ namespace PixelDrawer
                                 { "backgroundBlue", backBlue },
                                 { "fontColorRed", fontRed },
                                 { "fontColorGreen", fontGreen },
-                                { "fontColorBlue", fontBlue }
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                         else
                         {
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", start },
                                 { "selectionEnd", currentStart },
-                                { "blinking", blinking }
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                     }else if(currentEnd <= end && currentEnd >= start)
@@ -824,18 +724,18 @@ namespace PixelDrawer
                         {
                             toRemove.Add(i);
                         }
-                        selectionData.TryGetValue("blinking", out int blinking);
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
 
                         if (blinking == 1)
                         {
-                            selectionData.TryGetValue("backgroundRed", out int backRed);
-                            selectionData.TryGetValue("backgroundGreen", out int backGreen);
-                            selectionData.TryGetValue("backgroundBlue", out int backBlue);
-                            selectionData.TryGetValue("fontColorRed", out int fontRed);
-                            selectionData.TryGetValue("fontColorGreen", out int fontGreen);
-                            selectionData.TryGetValue("fontColorBlue", out int fontBlue);
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
 
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", currentEnd },
                                 { "selectionEnd", end },
@@ -845,16 +745,24 @@ namespace PixelDrawer
                                 { "backgroundBlue", backBlue },
                                 { "fontColorRed", fontRed },
                                 { "fontColorGreen", fontGreen },
-                                { "fontColorBlue", fontBlue }
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                         else
                         {
-                            toAdd.Add(new Dictionary<string, int>
+                            toAdd.Add(new Dictionary<string, dynamic>
                             {
                                 { "selectionStart", currentEnd },
                                 { "selectionEnd", end },
-                                { "blinking", blinking }
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
                             });
                         }
                     }
@@ -874,13 +782,13 @@ namespace PixelDrawer
                 
             }
 
-            foreach(Dictionary<string, int> item in toAdd){
+            foreach(Dictionary<string, dynamic> item in toAdd){
                 allSelectionLists[displayPage].Add(item);
             }
             
             if (byteRepr[0] == '1')
             {
-                allSelectionLists[displayPage].Add(new Dictionary<string, int>{
+                allSelectionLists[displayPage].Add(new Dictionary<string, dynamic>{
                     {"selectionStart", position },
                     {"selectionEnd", position + generatedText.Length },
                     { "blinking", 1 },
@@ -889,25 +797,33 @@ namespace PixelDrawer
                     { "backgroundBlue", backColorRed },
                     { "fontColorRed", fontColorRed },
                     { "fontColorGreen", fontColorGreen },
-                    { "fontColorBlue", fontColorBlue }
+                    { "fontColorBlue", fontColorBlue },
+                    { "attrAL", tb_AL.Text },
+                    { "attrBL", tb_BL.Text },
+                    { "attrCH", tb_CH.Text },
+                    { "attrCL", tb_CL.Text }
                 });
             }
             else if (!isShowCursorCall)
             {
-                allSelectionLists[displayPage].Add(new Dictionary<string, int>{
+                allSelectionLists[displayPage].Add(new Dictionary<string, dynamic>{
                     {"selectionStart", position },
                     {"selectionEnd", position + generatedText.Length },
                     { "blinking", 0 },
+                    { "attrAL", tb_AL.Text },
+                    { "attrBL", tb_BL.Text },
+                    { "attrCH", tb_CH.Text },
+                    { "attrCL", tb_CL.Text }
                 });
             }
 
-            foreach (Dictionary<string, int> selectionData in allSelectionLists[displayPage])
+            foreach (Dictionary<string, dynamic> selectionData in allSelectionLists[displayPage])
             {
-                selectionData.TryGetValue("selectionStart", out int start);
-                selectionData.TryGetValue("selectionEnd", out int end);
-                selectionData.TryGetValue("backgroundRed", out int red);
-                selectionData.TryGetValue("backgroundGreen", out int green);
-                selectionData.TryGetValue("backgroundBlue", out int blue);
+                selectionData.TryGetValue("selectionStart", out dynamic start);
+                selectionData.TryGetValue("selectionEnd", out dynamic end);
+                selectionData.TryGetValue("backgroundRed", out dynamic red);
+                selectionData.TryGetValue("backgroundGreen", out dynamic green);
+                selectionData.TryGetValue("backgroundBlue", out dynamic blue);
 
                 boxes[displayPage].SelectionStart = start + start / resultForm.MaxRowLenght;
                 boxes[displayPage].SelectionLength = end - start;
@@ -915,7 +831,7 @@ namespace PixelDrawer
             }
 
             bool blinkingSelectionExists = allSelectionLists[displayPage].Any(x => {
-                int blinking;
+                dynamic blinking;
                 x.TryGetValue("blinking", out blinking);
                 return blinking == 1;
             });
@@ -937,26 +853,26 @@ namespace PixelDrawer
             resultForm.Show();
         }
          
-        public void Blink(ResultForm resultForm, List<Dictionary<string, int>> selections, int position, bool showCursorCall, RichTextBox manipulationPage)
+        public void Blink(ResultForm resultForm, List<Dictionary<string, dynamic>> selections, int position, bool showCursorCall, RichTextBox manipulationPage)
         {
             while (true)
             {
-                foreach (Dictionary<string, int> selectionData in selections)
+                foreach (Dictionary<string, dynamic> selectionData in selections)
                 {
-                    int blinking = 0;
+                    dynamic blinking = 0;
                     selectionData.TryGetValue("blinking", out blinking);
 
                     if (blinking == 1)
                     {
-                        int start = 0;
-                        int end = 0;
+                        dynamic start = 0;
+                        dynamic end = 0;
 
                         selectionData.TryGetValue("selectionStart", out start);
                         selectionData.TryGetValue("selectionEnd", out end);
 
-                        selectionData.TryGetValue("fontColorRed", out int red);
-                        selectionData.TryGetValue("fontColorGreen", out int green);
-                        selectionData.TryGetValue("fontColorBlue", out int blue);
+                        selectionData.TryGetValue("fontColorRed", out dynamic red);
+                        selectionData.TryGetValue("fontColorGreen", out dynamic green);
+                        selectionData.TryGetValue("fontColorBlue", out dynamic blue);
 
                         Color fontColor = Color.FromArgb(red, green, blue);
 
@@ -988,48 +904,49 @@ namespace PixelDrawer
         private void ReadStyledText()
         {
             int displayPage = HexToDecimal(tb_BH.Text);
-            string tempValue = string.Empty;
+            int requestedRow = HexToDecimal(tb_DH.Text);
+            int requestedCol = HexToDecimal(tb_DL.Text);
+            List<Dictionary<string, dynamic>> pageSelections;
+
             switch (displayPage)
             {
                 case 0:
-                    resultForm.VideoPage1Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage1Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage1Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections;
                     break;
                 case 1:
-                    resultForm.VideoPage2Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage2Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage2Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections1;
                     break;
                 case 2:
-                    resultForm.VideoPage3Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage3Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage3Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections2;
                     break;
                 case 3:
-                    resultForm.VideoPage4Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage4Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage4Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections3;
                     break;
                 default:
-                    MessageBox.Show("Невалидна видеостраница! Изберете от 0 до 3.");
+                    pageSelections = new List<Dictionary<string, dynamic>>();
                     break;
+            }
+
+            int absolutePosition = requestedRow * resultForm.MaxRowLenght + requestedCol;
+            foreach(Dictionary<string, dynamic> selectionData in pageSelections)
+            {
+                selectionData.TryGetValue("selectionStart", out dynamic start);
+                selectionData.TryGetValue("selectionEnd", out dynamic end);
+
+                if (absolutePosition >= start && absolutePosition <= end)
+                {
+                    selectionData.TryGetValue("attrAL", out dynamic ALText);
+                    selectionData.TryGetValue("attrBL", out dynamic BLText);
+                    selectionData.TryGetValue("attrCL", out dynamic CLText);
+                    selectionData.TryGetValue("attrCH", out dynamic CHText);
+
+                    tb_AL.Text = ALText;
+                    tb_BL.Text = BLText;
+                    tb_CL.Text = CLText;
+                    tb_CH.Text = CHText;
+
+                    break;
+                }
             }
         }
 
@@ -1632,14 +1549,14 @@ namespace PixelDrawer
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
-            tb_DH.Text = string.Empty;
-            tb_DH.ReadOnly = true;
-            tb_DH.BackColor = Color.LightSlateGray;
+            tb_DH.Text = "00";
+            tb_DH.ReadOnly = false;
+            tb_DH.BackColor = Color.White;
 
-            tb_DL.Text = string.Empty;
-            tb_DL.ReadOnly = true;
-            tb_DL.BackColor = Color.LightSlateGray;
-
+            tb_DL.Text = "00";
+            tb_DL.ReadOnly = false;
+            tb_DL.BackColor = Color.White;
+            
             lbl_Help.Text = string.Format("В текстов режим кода на символа се получава в AL, а байта с атрибути в CX. В BH се задава номера на видеостраницата.");
         }
 
