@@ -33,6 +33,8 @@ namespace PixelDrawer
         private Dictionary<string, string> videoPage3Values;
         private Dictionary<string, string> videoPage4Values;
         private bool isTextMode;
+        private int maxRowLength;
+        private int maxRows;
         private int pointsDone;
         private RichTextBox selectedPage;
         private Thread blinkThread;
@@ -98,6 +100,8 @@ namespace PixelDrawer
         public Dictionary<string, string> VideoPage4Values { get => videoPage4Values; set => videoPage4Values = value; }
         public bool isModeReset { get; set; }
         public Thread BlinkThread { get => blinkThread; set => blinkThread = value; }
+        public int MaxRowLenght { get => maxRowLength; set => maxRowLength = value; }
+        public int MaxRows { get => maxRows; set => maxRows = value; }
         #endregion
 
         #region EventHandlers

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -32,11 +35,16 @@ namespace PixelDrawer
         public int cursorRow3;
         public int cursorCol3;
         public int videoPageNum = 0;
+        public int selectedPageNum = 0;
         public bool isModeSet = false;
         public bool isTextMode = true;
         public bool isBlackWhite = true;
         public ResultForm resultForm;
         public bool isShowCursorCall = false;
+        public List<Dictionary<string, dynamic>> selections;
+        public List<Dictionary<string, dynamic>> selections1;
+        public List<Dictionary<string, dynamic>> selections2;
+        public List<Dictionary<string, dynamic>> selections3;
         #endregion
 
         public UserForm()
@@ -127,24 +135,48 @@ namespace PixelDrawer
                         ToggleTextButtons(true);
                         isBlackWhite = true;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 45;
+                        resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 1:
                         RenderFormResolution(45, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = false;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 45;
+                        resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 2:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = true;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 80;
+                        resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 3:
                         RenderFormResolution(80, 25);
                         ToggleTextButtons(true);
                         isBlackWhite = false;
                         isTextMode = true;
+                        resultForm.MaxRowLenght = 80;
+                        resultForm.MaxRows = 25;
+                        selections = new List<Dictionary<string, dynamic>>();
+                        selections1 = new List<Dictionary<string, dynamic>>();
+                        selections2 = new List<Dictionary<string, dynamic>>();
+                        selections3 = new List<Dictionary<string, dynamic>>();
                         break;
                     case 4:
                         RenderFormResolution(320, 200);
@@ -193,7 +225,7 @@ namespace PixelDrawer
                         int width = resolution.Width - 15;
 
                         resultForm.Tb_General = new RichTextBox();
-                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 0.64444));
                         resultForm.Tb_General.ReadOnly = true;
                         resultForm.Tb_General.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General.Size = new System.Drawing.Size(width, height);
@@ -327,18 +359,22 @@ namespace PixelDrawer
             {
                 case 0:
                     resultForm.SelectedPage = resultForm.Tb_General;
+                    selectedPageNum = 0;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 1:
                     resultForm.SelectedPage = resultForm.Tb_General1;
+                    selectedPageNum = 1;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 2:
                     resultForm.SelectedPage = resultForm.Tb_General2;
+                    selectedPageNum = 2;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 case 3:
                     resultForm.SelectedPage = resultForm.Tb_General3;
+                    selectedPageNum = 3;
                     MessageBox.Show(string.Format(@"Избрана е страница {0}", videoPageNum));
                     break;
                 default:
@@ -371,7 +407,7 @@ namespace PixelDrawer
                 return;
             }
 
-            if(resultForm.BlinkThread != null)
+            if (resultForm.BlinkThread != null)
             {
                 resultForm.BlinkThread.Abort();
                 resultForm.BlinkThread = null;
@@ -384,221 +420,122 @@ namespace PixelDrawer
             char displayCharacter = (char)HexToDecimal(tb_AL.Text);
             int characterCount = HexToDecimal(string.Format(@"{0}{1}", tb_CH.Text, tb_CL.Text));
             int displayPage = HexToDecimal(tb_BH.Text);
-            if(displayPage <0 || displayPage > 3)
+            if (displayPage < 0 || displayPage > 3)
             {
                 MessageBox.Show("Изберете страница от 0 до 3");
                 return;
             }
+            string currentText = boxes[displayPage].Text;
             string generatedText = "";
             for (int i = 0; i < characterCount; i++)
             {
                 generatedText += displayCharacter;
             }
 
-            // TODO: Implement calculation of cursor position
             //cursorRow -= 1;
-            var text = new StringBuilder();
             string space = string.Empty;
             int selectionStart = 0;
             string dictValue = string.Empty;
+            int currentPageCursorRow = 0;
+            int currentPageCursorCol = 0;
+            List<List<Dictionary<string, dynamic>>> allSelectionLists = new List<List<Dictionary<string, dynamic>>> {
+                selections, selections1, selections2, selections3
+            };
 
+            if (tb_AL.Text.Length < 2)
+            {
+                tb_AL.Text = "0" + tb_AL.Text;
+            }
+
+            if (tb_BL.Text.Length < 2)
+            {
+                tb_BL.Text = "0" + tb_BL.Text;
+            }
+
+            if (tb_CH.Text.Length < 2)
+            {
+                tb_CH.Text = "0" + tb_CH.Text;
+            }
+
+            if (tb_CL.Text.Length < 2)
+            {
+                tb_CL.Text = "0" + tb_CL.Text;
+            }
 
             switch (displayPage)
             {
                 case 0:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow; i++)
-                    {
-                        text.AppendLine();
-                    }
-
-                    space = new string(' ', cursorCol);
                     selectionStart = cursorRow + cursorCol;
+                    currentPageCursorCol = cursorCol;
+                    currentPageCursorRow = cursorRow;
 
-                    if(tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("AL");
-                    }
-                    resultForm.VideoPage1Values.Add("AL", tb_AL.Text);
-                    
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("CH");
-                    }
-                    resultForm.VideoPage1Values.Add("CH", tb_CH.Text);
-
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage1Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage1Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage1Values.Add("CL", tb_CL.Text);
                     break;
                 case 1:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow1; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow1 + cursorCol1;
-                    space = new string(' ', cursorCol1);
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage2Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage2Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage2Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage2Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage2Values.Add("CL", tb_CL.Text);
-
+                    currentPageCursorCol = cursorCol1;
+                    currentPageCursorRow = cursorRow1;
+                    
                     break;
                 case 2:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow2; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow2 + cursorCol2;
-                    space = new string(' ', cursorCol2);
-
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage3Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage3Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage3Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage3Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage3Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage3Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage3Values.Add("CL", tb_CL.Text);
+                    currentPageCursorCol = cursorCol2;
+                    currentPageCursorRow = cursorRow2;
+                    
                     break;
                 case 3:
-                    text = new StringBuilder();
-                    for (int i = 0; i < cursorRow3; i++)
-                    {
-                        text.AppendLine();
-                    }
                     selectionStart = cursorRow3 + cursorCol3;
-                    space = new string(' ', cursorCol3);
-                    if (tb_AL.Text.Length < 2)
-                    {
-                        tb_AL.Text = "0" + tb_AL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("AL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("AL");
-                    }
-
-                    resultForm.VideoPage4Values.Add("AL", tb_AL.Text);
-
-                    if (tb_CH.Text.Length < 2)
-                    {
-                        tb_CH.Text = "0" + tb_CH.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CH", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CH");
-                    }
-
-                    resultForm.VideoPage4Values.Add("CH", tb_CH.Text);
-
-                    if (tb_CL.Text.Length < 2)
-                    {
-                        tb_CL.Text = "0" + tb_CL.Text;
-                    }
-
-                    if (resultForm.VideoPage4Values.TryGetValue("CL", out dictValue))
-                    {
-                        resultForm.VideoPage4Values.Remove("CL");
-                    }
-
-                    resultForm.VideoPage4Values.Add("CL", tb_CL.Text);
+                    currentPageCursorCol = cursorCol3;
+                    currentPageCursorRow = cursorRow3;
+                    
                     break;
                 default:
                     break;
             }
 
-            text.Append(space);
-            text.Append(generatedText);
+
+            int position = currentPageCursorRow * resultForm.MaxRowLenght + currentPageCursorCol;
+
+            var newText = new StringBuilder(Regex.Replace(currentText, @"\n|\r", String.Empty));
+            if (position > newText.Length)
+            {
+                newText.Append(new String(' ', position - newText.Length));
+            }
+
+            try
+            {
+                newText.Remove(position, generatedText.Length);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                newText.Remove(position, newText.Length - position);
+            }
+
+            newText.Insert(position, generatedText);
+
+            var resultText = new StringBuilder();
+            for (int i = 0; i <= newText.Length / resultForm.MaxRowLenght; i++)
+            {
+                try
+                {
+                    resultText.Append(newText.ToString().Substring(i * resultForm.MaxRowLenght, resultForm.MaxRowLenght) + Environment.NewLine);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    resultText.Append(newText.ToString().Substring(i * resultForm.MaxRowLenght, newText.Length % resultForm.MaxRowLenght));
+                }
+            }
+
+
 
             boxes[displayPage].Text = "";
-            boxes[displayPage].Text = resultForm.Text.Insert(0, text.ToString());
+            boxes[displayPage].Text = resultForm.Text.Insert(0, resultText.ToString());
             boxes[displayPage].SelectionStart = selectionStart;
             boxes[displayPage].SelectionLength = 0;
-            
+
             int styleInDecimal = HexToDecimal(tb_BL.Text);
             string byteRepr = "";
             int remainder;
+
 
             while (styleInDecimal > 0)
             {
@@ -612,99 +549,404 @@ namespace PixelDrawer
             Color textBackColor = Color.Black;
             Color textColor = Color.White;
 
+            int backColorRed = 0;
+            int backColorGreen = 0;
+            int backColorBlue = 0;
+            int fontColorRed = 255;
+            int fontColorGreen = 255;
+            int fontColorBlue = 255;
+
             if (!isBlackWhite)
             {
-                int red = byteRepr[1] == '1' ? 255 : 0;
-                int green = byteRepr[2] == '1' ? 255 : 0;
-                int blue = byteRepr[3] == '1' ? 255 : 0;
-                textBackColor = Color.FromArgb(red, green, blue);
+                backColorRed = byteRepr[1] == '1' ? 255 : 0;
+                backColorGreen = byteRepr[2] == '1' ? 255 : 0;
+                backColorBlue = byteRepr[3] == '1' ? 255 : 0;
 
-                red = byteRepr[5] == '1' ? 255 : 0;
-                green = byteRepr[6] == '1' ? 255 : 0;
-                blue = byteRepr[7] == '1' ? 255 : 0;
-                textColor = Color.FromArgb(red, green, blue); 
+                fontColorRed = byteRepr[5] == '1' ? 255 : 0;
+                fontColorGreen = byteRepr[6] == '1' ? 255 : 0;
+                fontColorBlue = byteRepr[7] == '1' ? 255 : 0;
             }
 
-            boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length - (boxes[displayPage].Text.Length - space.Length);
-            boxes[displayPage].SelectionLength = boxes[displayPage].Text.Length - space.Length;
-            boxes[displayPage].SelectionBackColor = textBackColor;
-            boxes[displayPage].SelectionLength = 0;
-            boxes[displayPage].SelectionStart = boxes[displayPage].Text.Length;
-
-            resultForm.SelectedPage = boxes[videoPageNum];//страница за гледанe
-
-            boxes[displayPage].ForeColor = textColor;
+            resultForm.SelectedPage = boxes[selectedPageNum];//страница за гледанe  
 
             CheckForIllegalCrossThreadCalls = false;
+            //TODO: Implement logic for changing selection data in selection lists dynamically if text is overwritten
+            
+            int currentStart = position;
+            int currentEnd = position + generatedText.Length;
 
-            if (byteRepr[0] == '1')
+            BinaryFormatter formatter = new BinaryFormatter();
+            MemoryStream stream = new MemoryStream();
+            formatter.Serialize(stream, allSelectionLists[displayPage]);
+            stream.Position = 0;
+            List<Dictionary<string, dynamic>> selectionsCopy = (List<Dictionary<string, dynamic>>)formatter.Deserialize(stream);
+
+            List<Dictionary<string, dynamic>> toAdd = new List<Dictionary<string, dynamic>>();
+            List<int> toRemove = new List<int>();
+            if (!isShowCursorCall)
             {
-                if (resultForm.BlinkThread == null)
+                for (int i = 0; i < selectionsCopy.Count; i++)
                 {
-                    resultForm.BlinkThread = new Thread(() => Blink(textColor, resultForm));
-                    resultForm.BlinkThread.Start();
+                    Dictionary<string, dynamic> selectionData = selectionsCopy[i];
+                    selectionData.TryGetValue("selectionStart", out dynamic start);
+                    selectionData.TryGetValue("selectionEnd", out dynamic end);
+
+                    if(currentStart == start && currentEnd == end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                    }else if (currentStart >= start && currentEnd <= end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                    }else if(currentStart >= start && currentStart <= end)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
+
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
+
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", start },
+                                { "selectionEnd", currentStart },
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                    }else if(currentEnd <= end && currentEnd >= start)
+                    {
+                        if (!toRemove.Contains(i))
+                        {
+                            toRemove.Add(i);
+                        }
+                        selectionData.TryGetValue("blinking", out dynamic blinking);
+
+                        if (blinking == 1)
+                        {
+                            selectionData.TryGetValue("backgroundRed", out dynamic backRed);
+                            selectionData.TryGetValue("backgroundGreen", out dynamic backGreen);
+                            selectionData.TryGetValue("backgroundBlue", out dynamic backBlue);
+                            selectionData.TryGetValue("fontColorRed", out dynamic fontRed);
+                            selectionData.TryGetValue("fontColorGreen", out dynamic fontGreen);
+                            selectionData.TryGetValue("fontColorBlue", out dynamic fontBlue);
+
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "backgroundRed", backRed },
+                                { "backgroundGreen", backGreen },
+                                { "backgroundBlue", backBlue },
+                                { "fontColorRed", fontRed },
+                                { "fontColorGreen", fontGreen },
+                                { "fontColorBlue", fontBlue },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                        else
+                        {
+                            toAdd.Add(new Dictionary<string, dynamic>
+                            {
+                                { "selectionStart", currentEnd },
+                                { "selectionEnd", end },
+                                { "blinking", blinking },
+                                { "attrAL", tb_AL.Text },
+                                { "attrBL", tb_BL.Text },
+                                { "attrCH", tb_CH.Text },
+                                { "attrCL", tb_CL.Text }
+                            });
+                        }
+                    }
                 }
             }
 
+            foreach(int indexToRemove in toRemove)
+            {
+                try
+                {
+                    allSelectionLists[displayPage].RemoveAt(indexToRemove);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    allSelectionLists[displayPage].RemoveAt(indexToRemove-1);
+                }
+                
+            }
+
+            foreach(Dictionary<string, dynamic> item in toAdd){
+                allSelectionLists[displayPage].Add(item);
+            }
+            
+            if (byteRepr[0] == '1')
+            {
+                allSelectionLists[displayPage].Add(new Dictionary<string, dynamic>{
+                    {"selectionStart", position },
+                    {"selectionEnd", position + generatedText.Length },
+                    { "blinking", 1 },
+                    { "backgroundRed", backColorRed },
+                    { "backgroundGreen", backColorGreen },
+                    { "backgroundBlue", backColorRed },
+                    { "fontColorRed", fontColorRed },
+                    { "fontColorGreen", fontColorGreen },
+                    { "fontColorBlue", fontColorBlue },
+                    { "attrAL", tb_AL.Text },
+                    { "attrBL", tb_BL.Text },
+                    { "attrCH", tb_CH.Text },
+                    { "attrCL", tb_CL.Text }
+                });
+            }
+            else if (!isShowCursorCall)
+            {
+                allSelectionLists[displayPage].Add(new Dictionary<string, dynamic>{
+                    {"selectionStart", position },
+                    {"selectionEnd", position + generatedText.Length },
+                    { "blinking", 0 },
+                    { "attrAL", tb_AL.Text },
+                    { "attrBL", tb_BL.Text },
+                    { "attrCH", tb_CH.Text },
+                    { "attrCL", tb_CL.Text }
+                });
+            }
+
+            foreach (Dictionary<string, dynamic> selectionData in allSelectionLists[displayPage])
+            {
+                selectionData.TryGetValue("selectionStart", out dynamic start);
+                selectionData.TryGetValue("selectionEnd", out dynamic end);
+                selectionData.TryGetValue("backgroundRed", out dynamic red);
+                selectionData.TryGetValue("backgroundGreen", out dynamic green);
+                selectionData.TryGetValue("backgroundBlue", out dynamic blue);
+
+                boxes[displayPage].SelectionStart = start + start / resultForm.MaxRowLenght;
+                boxes[displayPage].SelectionLength = end - start;
+                boxes[displayPage].SelectionBackColor = Color.FromArgb(red, green, blue);
+            }
+
+            bool blinkingSelectionExists = allSelectionLists[displayPage].Any(x => {
+                dynamic blinking;
+                x.TryGetValue("blinking", out blinking);
+                return blinking == 1;
+            });
+
+            int actualPosition = position + new Regex(Regex.Escape(Environment.NewLine)).Matches(resultText.ToString()).Count;
+            if (blinkingSelectionExists && resultForm.BlinkThread == null)
+            {
+                resultForm.BlinkThread = new Thread(() => Blink(resultForm, allSelectionLists[selectedPageNum], actualPosition, isShowCursorCall, boxes[displayPage]));
+                resultForm.BlinkThread.Start();
+            }
+
+            if (isShowCursorCall)
+            {
+                boxes[displayPage].SelectionStart = actualPosition;
+                resultForm.SelectedPage = boxes[displayPage];   
+            }
+            resultForm.SelectedPage.Select();
             resultForm.SelectedPage.Show();
             resultForm.Show();
         }
          
-        public void Blink(Color fontColor, ResultForm resultForm)
+        public void Blink(ResultForm resultForm, List<Dictionary<string, dynamic>> selections, int position, bool showCursorCall, RichTextBox manipulationPage)
         {
-            resultForm.isModeReset = false;
-            while (!resultForm.isModeReset)
+            while (true)
             {
+                foreach (Dictionary<string, dynamic> selectionData in selections)
+                {
+                    dynamic blinking = 0;
+                    selectionData.TryGetValue("blinking", out blinking);
+
+                    if (blinking == 1)
+                    {
+                        dynamic start = 0;
+                        dynamic end = 0;
+
+                        selectionData.TryGetValue("selectionStart", out start);
+                        selectionData.TryGetValue("selectionEnd", out end);
+
+                        selectionData.TryGetValue("fontColorRed", out dynamic red);
+                        selectionData.TryGetValue("fontColorGreen", out dynamic green);
+                        selectionData.TryGetValue("fontColorBlue", out dynamic blue);
+
+                        Color fontColor = Color.FromArgb(red, green, blue);
+
+                        resultForm.SelectedPage.SelectionStart = start + start / resultForm.MaxRowLenght;
+                        resultForm.SelectedPage.SelectionLength = end - start;
+                        bool colorsEqual = (resultForm.SelectedPage.SelectionColor.R == red
+                           && resultForm.SelectedPage.SelectionColor.G == green
+                           && resultForm.SelectedPage.SelectionColor.B == blue)
+                           || resultForm.SelectedPage.SelectionColor == fontColor;
+
+                        resultForm.SelectedPage.SelectionColor = colorsEqual ? resultForm.SelectedPage.BackColor : fontColor;
+                        if (colorsEqual)
+                        {
+                            resultForm.SelectedPage.SelectionColor = resultForm.SelectedPage.BackColor;
+                        }
+                        else
+                        {
+                            resultForm.SelectedPage.SelectionColor = fontColor;
+                        }
+                    }
+                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : resultForm.SelectedPage.Text.Length;
+                    resultForm.SelectedPage.SelectionLength = 0;
+                }
+                
                 Thread.Sleep(500);
-                resultForm.SelectedPage.ForeColor = resultForm.SelectedPage.ForeColor == fontColor ? resultForm.SelectedPage.BackColor : fontColor;
-            }
+            } 
         }
 
         private void ReadStyledText()
         {
             int displayPage = HexToDecimal(tb_BH.Text);
-            string tempValue = string.Empty;
+            int requestedRow = HexToDecimal(tb_DH.Text);
+            int requestedCol = HexToDecimal(tb_DL.Text);
+            List<Dictionary<string, dynamic>> pageSelections;
+
             switch (displayPage)
             {
                 case 0:
-                    resultForm.VideoPage1Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage1Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage1Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections;
                     break;
                 case 1:
-                    resultForm.VideoPage2Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage2Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage2Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections1;
                     break;
                 case 2:
-                    resultForm.VideoPage3Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage3Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage3Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections2;
                     break;
                 case 3:
-                    resultForm.VideoPage4Values.TryGetValue("AL", out tempValue);
-                    tb_AL.Text = tempValue;
-                    resultForm.VideoPage4Values.TryGetValue("CH", out tempValue);
-                    tb_CH.Text = tempValue;
-                    resultForm.VideoPage4Values.TryGetValue("CL", out tempValue);
-                    tb_CL.Text = tempValue;
-
+                    pageSelections = selections3;
                     break;
                 default:
-                    MessageBox.Show("Невалидна видеостраница! Изберете от 0 до 3.");
+                    pageSelections = new List<Dictionary<string, dynamic>>();
                     break;
+            }
+
+            int absolutePosition = requestedRow * resultForm.MaxRowLenght + requestedCol;
+            foreach(Dictionary<string, dynamic> selectionData in pageSelections)
+            {
+                selectionData.TryGetValue("selectionStart", out dynamic start);
+                selectionData.TryGetValue("selectionEnd", out dynamic end);
+
+                if (absolutePosition >= start && absolutePosition <= end)
+                {
+                    selectionData.TryGetValue("attrAL", out dynamic ALText);
+                    selectionData.TryGetValue("attrBL", out dynamic BLText);
+                    selectionData.TryGetValue("attrCL", out dynamic CLText);
+                    selectionData.TryGetValue("attrCH", out dynamic CHText);
+
+                    tb_AL.Text = ALText;
+                    tb_BL.Text = BLText;
+                    tb_CL.Text = CLText;
+                    tb_CH.Text = CHText;
+
+                    break;
+                }
             }
         }
 
@@ -1307,14 +1549,14 @@ namespace PixelDrawer
             tb_CL.ReadOnly = true;
             tb_CL.BackColor = Color.LightSlateGray;
 
-            tb_DH.Text = string.Empty;
-            tb_DH.ReadOnly = true;
-            tb_DH.BackColor = Color.LightSlateGray;
+            tb_DH.Text = "00";
+            tb_DH.ReadOnly = false;
+            tb_DH.BackColor = Color.White;
 
-            tb_DL.Text = string.Empty;
-            tb_DL.ReadOnly = true;
-            tb_DL.BackColor = Color.LightSlateGray;
-
+            tb_DL.Text = "00";
+            tb_DL.ReadOnly = false;
+            tb_DL.BackColor = Color.White;
+            
             lbl_Help.Text = string.Format("В текстов режим кода на символа се получава в AL, а байта с атрибути в CX. В BH се задава номера на видеостраницата.");
         }
 
