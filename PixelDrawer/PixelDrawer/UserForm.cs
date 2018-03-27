@@ -126,6 +126,15 @@ namespace PixelDrawer
         {
             resultForm.BackColor = Color.Black;
             resultForm.isModeReset = true;
+            cursorCol = 0;
+            cursorRow = 0;
+            cursorCol1 = 0;
+            cursorRow1 = 0;
+            cursorCol2 = 0;
+            cursorRow2 = 0;
+            cursorCol3 = 0;
+            cursorRow3 = 0;
+            
             try
             {
                 switch (Convert.ToInt32(AL))
@@ -275,6 +284,10 @@ namespace PixelDrawer
                 MessageBox.Show("Невалидна режим! Изберете от опциите в описанието.");
                 tb_AL.Text = "00";
             }
+
+            isShowCursorCall = true;
+            InsertStyledText();
+            isShowCursorCall = false;
         }
 
         //Позициониране на курсора
@@ -810,6 +823,12 @@ namespace PixelDrawer
                     {"selectionStart", position },
                     {"selectionEnd", position + generatedText.Length },
                     { "blinking", 0 },
+                    { "backgroundRed", backColorRed },
+                    { "backgroundGreen", backColorGreen },
+                    { "backgroundBlue", backColorRed },
+                    { "fontColorRed", fontColorRed },
+                    { "fontColorGreen", fontColorGreen },
+                    { "fontColorBlue", fontColorBlue },
                     { "attrAL", tb_AL.Text },
                     { "attrBL", tb_BL.Text },
                     { "attrCH", tb_CH.Text },
@@ -828,6 +847,8 @@ namespace PixelDrawer
                 boxes[displayPage].SelectionStart = start + start / resultForm.MaxRowLenght;
                 boxes[displayPage].SelectionLength = end - start;
                 boxes[displayPage].SelectionBackColor = Color.FromArgb(red, green, blue);
+                boxes[displayPage].SelectionStart = start;
+                boxes[displayPage].SelectionLength = 0;
             }
 
             bool blinkingSelectionExists = allSelectionLists[displayPage].Any(x => {
@@ -893,7 +914,9 @@ namespace PixelDrawer
                             resultForm.SelectedPage.SelectionColor = fontColor;
                         }
                     }
-                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : resultForm.SelectedPage.Text.Length;
+                    Dictionary<string, dynamic> latestSelection = selections.Last();
+                    latestSelection.TryGetValue("selectionStart", out dynamic lastSelectionStart);
+                    resultForm.SelectedPage.SelectionStart = showCursorCall ? position : lastSelectionStart;
                     resultForm.SelectedPage.SelectionLength = 0;
                 }
                 
