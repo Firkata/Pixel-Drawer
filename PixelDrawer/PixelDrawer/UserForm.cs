@@ -234,7 +234,7 @@ namespace PixelDrawer
                         int width = resolution.Width - 15;
 
                         resultForm.Tb_General = new RichTextBox();
-                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 0.64444));
+                        resultForm.Tb_General.Font = new Font(resultForm.Tb_General.Font.FontFamily, (float)(ratioX * 0.6));
                         resultForm.Tb_General.ReadOnly = true;
                         resultForm.Tb_General.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General.Size = new System.Drawing.Size(width, height);
@@ -244,7 +244,7 @@ namespace PixelDrawer
                         resultForm.Tb_General.BackColor = Color.Black;
 
                         resultForm.Tb_General1 = new RichTextBox();
-                        resultForm.Tb_General1.Font = new Font(resultForm.Tb_General1.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General1.Font = new Font(resultForm.Tb_General1.Font.FontFamily, (float)(ratioX * 0.6));
                         resultForm.Tb_General1.ReadOnly = true;
                         resultForm.Tb_General1.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General1.Size = new System.Drawing.Size(width, height);
@@ -254,7 +254,7 @@ namespace PixelDrawer
                         resultForm.Tb_General1.BackColor = Color.Black;
 
                         resultForm.Tb_General2 = new RichTextBox();
-                        resultForm.Tb_General2.Font = new Font(resultForm.Tb_General2.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General2.Font = new Font(resultForm.Tb_General2.Font.FontFamily, (float)(ratioX * 0.6));
                         resultForm.Tb_General2.ReadOnly = true;
                         resultForm.Tb_General2.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General2.Size = new System.Drawing.Size(width, height);
@@ -264,7 +264,7 @@ namespace PixelDrawer
                         resultForm.Tb_General2.BackColor = Color.Black;
 
                         resultForm.Tb_General3 = new RichTextBox();
-                        resultForm.Tb_General3.Font = new Font(resultForm.Tb_General3.Font.FontFamily, (float)(ratioX * 1.0546875));
+                        resultForm.Tb_General3.Font = new Font(resultForm.Tb_General3.Font.FontFamily, (float)(ratioX * 0.6));
                         resultForm.Tb_General3.ReadOnly = true;
                         resultForm.Tb_General3.MaximumSize = new System.Drawing.Size(width, height);
                         resultForm.Tb_General3.Size = new System.Drawing.Size(width, height);
@@ -1259,21 +1259,21 @@ namespace PixelDrawer
                 Environment.NewLine,
                 "режим".PadRight(14) + "тип".PadRight(14) + "цветове".PadRight(14) + "размер",
                 Environment.NewLine,
-                "".PadRight(4) + "0".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "40x25",
+                "".PadRight(4) + "0".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "25x40",
                 Environment.NewLine,
-                "".PadRight(4) + "1".PadRight(17) + "т".PadRight(19) + "16".PadRight(15) + "40x25",
+                "".PadRight(4) + "1".PadRight(17) + "т".PadRight(19) + "16".PadRight(15) + "25x40",
                 Environment.NewLine,
-                "".PadRight(4) + "2".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "80x25",
+                "".PadRight(4) + "2".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "25x80",
                 Environment.NewLine,
-                "".PadRight(4) + "3".PadRight(17) + "т".PadRight(19) + "16".PadRight(15) + "80x25",
+                "".PadRight(4) + "3".PadRight(17) + "т".PadRight(19) + "16".PadRight(15) + "25x80",
                 Environment.NewLine,
-                "".PadRight(4) + "4".PadRight(16) + "гр".PadRight(20) + "4".PadRight(13) + "320x200",
+                "".PadRight(4) + "4".PadRight(16) + "гр".PadRight(20) + "4".PadRight(13) + "200x320",
                 Environment.NewLine,
-                "".PadRight(4) + "5".PadRight(16) + "гр".PadRight(20) + "4".PadRight(13) + "320x200",
+                "".PadRight(4) + "5".PadRight(16) + "гр".PadRight(20) + "4".PadRight(13) + "200x320",
                 Environment.NewLine,
-                "".PadRight(4) + "6".PadRight(16) + "гр".PadRight(20) + "2".PadRight(13) + "640x200",
+                "".PadRight(4) + "6".PadRight(16) + "гр".PadRight(20) + "2".PadRight(13) + "200x640",
                 Environment.NewLine,
-                "".PadRight(4) + "7".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "80x25");
+                "".PadRight(4) + "7".PadRight(17) + "т".PadRight(20) + "2".PadRight(15) + "25x80");
         }
 
         //Курсор
